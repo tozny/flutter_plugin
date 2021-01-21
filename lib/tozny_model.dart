@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:json_annotation/json_annotation.dart';
 
-part 'record_model.g.dart';
+part 'tozny_model.g.dart';
 
 @JsonSerializable(nullable: false, explicitToJson: true, checked: true)
 class ClientCredentials {
@@ -118,7 +118,6 @@ class FileMeta {
   String fileName;
   String checksum;
   int size;
-  // TODO compression?
 
   FileMeta({
     this.fileUrl,

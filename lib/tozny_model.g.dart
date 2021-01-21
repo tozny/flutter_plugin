@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'record_model.dart';
+part of 'tozny_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

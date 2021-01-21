@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:plugin_tozny/plugin_tozny.dart';
-import 'package:plugin_tozny/record_model.dart';
+import 'package:plugin_tozny/tozny_model.dart';
 import 'dart:developer' as developer;
 
 void main() {
@@ -46,9 +46,9 @@ class _MyAppState extends State<MyApp> {
   }
 
   void onButtonPress() async {
-    String registration_token = "INSERT_TOKEN_HERE";
+    String registrationToken = "INSERT_TOKEN_HERE";
     try {
-      var client = await register(registration_token);
+      var client = await register(registrationToken);
       Record writtenRecord = await writeRecord(client);
       Record tozstoreRecord = await readRecord(writtenRecord.metaData.recordID, client);
       developer.log(tozstoreRecord.toJson().toString());
