@@ -31,15 +31,15 @@ class PluginTozny {
   }
 
   static Future<void> share(String type, String readerID, ClientCredentials creds) async {
-    final dynamic recordJson = await _channel.invokeMethod('readRecord',
-        {"record_id": type,
+    final dynamic recordJson = await _channel.invokeMethod('share',
+        {"type": type,
           "reader_id": readerID,
           "client_credentials": creds.toJson()
         });
   }
 
   static Future<void> revoke(String type, String readerID, ClientCredentials creds) async {
-    final dynamic recordJson = await _channel.invokeMethod('readRecord',
+    final dynamic recordJson = await _channel.invokeMethod('revoke',
         {"type": type,
           "reader_id": readerID.toString(),
           "client_credentials": creds.toJson()
