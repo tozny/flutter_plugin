@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-
 import 'package:flutter/services.dart';
 import 'package:plugin_tozny/plugin_tozny.dart';
+import 'package:plugin_tozny/record_model.dart';
+import 'dart:developer' as developer;
 
 void main() {
   runApp(MyApp());
@@ -30,6 +31,8 @@ class _MyAppState extends State<MyApp> {
       platformVersion = await PluginTozny.platformVersion;
     } on PlatformException {
       platformVersion = 'Failed to get platform version.';
+    } catch(e) {
+      platformVersion = e.toString();
     }
 
     // If the widget was removed from the tree while the asynchronous platform
@@ -42,6 +45,54 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  void onButtonPress() async {
+    String registration_token = "INSERT_TOKEN_HERE";
+    try {
+      var client = await register(registration_token);
+      Record writtenRecord = await writeRecord(client);
+      Record tozstoreRecord = await readRecord(writtenRecord.metaData.recordID, client);
+      developer.log(tozstoreRecord.toJson().toString());
+    } catch(e) {
+      developer.log("example flow failed because $e");
+    }
+  }
+
+  Future<Record> writeRecord(ClientCredentials creds) async {
+    try {
+      var data = {"test": "example", "another": "encrypted"};
+      var plain = {"plain":"hello", "search":"world"};
+      var record = await PluginTozny.writeRecord("testType1", data, plain, creds);
+      setState(() {
+        _platformVersion = record.metaData.recordID;
+      });
+      return record;
+    } catch(e) {
+      developer.log(e.toString());
+    }
+  }
+
+  Future<Record> readRecord(String recordID, ClientCredentials creds) async {
+    try {
+      var record = await PluginTozny.readRecord(recordID, creds);
+      setState(() {
+        _platformVersion = "Reading record";
+      });
+      return record;
+    } catch(e) {
+      developer.log("found error");
+      developer.log(e.toString());
+    }
+  }
+
+  Future<ClientCredentials> register(String regToken) async {
+    var client = await PluginTozny.register(regToken, "flutter_test_client");
+    setState(() {
+      _platformVersion = client.toJson().toString();
+    });
+    return client;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -49,8 +100,16 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+        body: Stack(
+          children: <Widget>[
+            Center(
+              child: RaisedButton(
+                child: Text('Tozny Test'),
+                onPressed: onButtonPress,
+              ),
+            ),
+            Text('Running on: $_platformVersion\n'),
+          ]
         ),
       ),
     );

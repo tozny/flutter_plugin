@@ -31,19 +31,7 @@ android {
         disable 'InvalidPackage'
     }
 
-    dependencies {
-        repositories {
-            mavenCentral()
-            maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
-        }
-
-        implementation ('com.tozny.e3db:e3db-client-android:5.0.1@aar') {
-            transitive = true
-        }
-    }
-
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.tozny.plugin_tozny"
         minSdkVersion 16
         targetSdkVersion 29
