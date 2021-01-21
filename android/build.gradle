@@ -22,12 +22,6 @@ rootProject.allprojects {
     }
 }
 
-// dependencies {
-//     compile 'com.fasterxml.jackson.core:jackson-core:2.9.0'
-//     compile 'com.fasterxml.jackson.core:jackson-annotations:2.9.0'
-//     compile 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
-// }
-
 apply plugin: 'com.android.library'
 
 android {
