@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void onButtonPress() async {
-    String registrationToken = "d0512829994383eb04dff5ea977fc1f58999751819da656b69b68429449cd548";
+    String registrationToken = "TOKEN_HERE";
     try {
       var client = await register(registrationToken);
       Record writtenRecord = await writeRecord(client);
