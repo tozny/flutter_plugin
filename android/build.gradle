@@ -28,15 +28,10 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 23
     }
     lintOptions {
         disable 'InvalidPackage'
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     dependencies {
@@ -45,7 +40,7 @@ android {
             maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
         }
 
-        implementation ('com.tozny.e3db:e3db-client-android:5.0.1@aar') {
+        implementation ('com.tozny.e3db:e3db-client-android:6.0.0@aar') {
             transitive = true
         }
 

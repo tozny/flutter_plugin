@@ -1,3 +1,3 @@
 ## 0.0.1
 
-Baseline features TozStore implemented.
+Baseline TozStore features implemented in Native Java.

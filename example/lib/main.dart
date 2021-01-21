@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   void onButtonPress() async {
-    String registrationToken = "INSERT_TOKEN_HERE";
+    String registrationToken = "d0512829994383eb04dff5ea977fc1f58999751819da656b69b68429449cd548";
     try {
       var client = await register(registrationToken);
       Record writtenRecord = await writeRecord(client);
@@ -57,13 +57,13 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<Record> writeRecord(ClientCredentials creds) async {
+  Future<Record> writeRecord(PluginTozny client) async {
     try {
       var data = {"test": "example", "another": "encrypted"};
       var plain = {"plain":"hello", "search":"world"};
-      var record = await PluginTozny.writeRecord("testType1", data, plain, creds);
+      var record = await client.writeRecord("testType1", data, plain);
       setState(() {
-        _platformVersion = record.metaData.recordID;
+        _platformVersion = "written record: " + record.metaData.recordID;
       });
       return record;
     } catch(e) {
@@ -71,11 +71,11 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<Record> readRecord(String recordID, ClientCredentials creds) async {
+  Future<Record> readRecord(String recordID, PluginTozny client) async {
     try {
-      var record = await PluginTozny.readRecord(recordID, creds);
+      var record = await client.readRecord(recordID);
       setState(() {
-        _platformVersion = "Reading record";
+        _platformVersion = "read record";
       });
       return record;
     } catch(e) {
@@ -84,10 +84,10 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<ClientCredentials> register(String regToken) async {
+  Future<PluginTozny> register(String regToken) async {
     var client = await PluginTozny.register(regToken, "flutter_test_client");
     setState(() {
-      _platformVersion = client.toJson().toString();
+      _platformVersion = "registered client";
     });
     return client;
   }

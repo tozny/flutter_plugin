@@ -1,8 +1,8 @@
 name: plugin_tozny
-description: A new flutter plugin project.
+description: Tozny flutter plugin to communicate with native SDKs.
 version: 0.0.1
-author:
-homepage:
+author: Tozny
+homepage: https://github.com/tozny/flutter-plugin
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -31,7 +31,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.example.plugin_tozny
+        package: com.tozny.plugin_tozny
         pluginClass: PluginToznyPlugin
 
   # To add assets to your plugin package, add an assets section, like this:

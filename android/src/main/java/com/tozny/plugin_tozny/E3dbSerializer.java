@@ -1,4 +1,4 @@
-package com.example.plugin_tozny;
+package com.tozny.plugin_tozny;
 
 import android.os.Build;
 
