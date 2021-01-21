@@ -1,3 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.example.plugin_tozny">
+    <uses-sdk android:minSdkVersion="23"
+        android:targetSdkVersion="29"
+         />
 </manifest>

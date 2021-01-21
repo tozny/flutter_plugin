@@ -5,8 +5,9 @@ buildscript {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+        maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
     }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
     }
@@ -16,6 +17,8 @@ rootProject.allprojects {
     repositories {
         google()
         jcenter()
+        mavenCentral()
+        maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
     }
 }
 
@@ -25,9 +28,29 @@ android {
     compileSdkVersion 29
 
     defaultConfig {
-        minSdkVersion 16
+        minSdkVersion 23
     }
     lintOptions {
         disable 'InvalidPackage'
+    }
+
+    dependencies {
+        repositories {
+            mavenCentral()
+            maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
+        }
+
+        implementation ('com.tozny.e3db:e3db-client-android:6.0.0@aar') {
+            transitive = true
+        }
+
+        implementation 'com.fasterxml.jackson.core:jackson-core:2.9.0'
+        implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.0'
+        implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
+
+        // resolve build dependency errors collisions with json-simple
+        configurations {
+            compile.exclude group: "junit", module: "junit"
+        }
     }
 }
