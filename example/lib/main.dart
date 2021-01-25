@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  Future<Record> writeFile(PluginTozny client) async {
+  Future<RecordMeta> writeFile(PluginTozny client) async {
     try {
       final directory = await getApplicationDocumentsDirectory();
       var filename = "test_file.txt";
@@ -80,6 +80,7 @@ class _MyAppState extends State<MyApp> {
       setState(() {
         _platformVersion = "written file record: " + recordMeta.recordID;
       });
+      return recordMeta;
     } catch(e) {
       developer.log("sdkfjlaskjdf" + e.toString());
     }

@@ -70,13 +70,15 @@ RecordMeta _$RecordMetaFromJson(Map<String, dynamic> json) {
       recordID: $checkedConvert(json, 'record_id', (v) => v as String),
       writerID: $checkedConvert(json, 'writer_id', (v) => v as String),
       userID: $checkedConvert(json, 'user_id', (v) => v as String),
-      created:
-          $checkedConvert(json, 'created', (v) => DateTime.parse(v as String)),
-      lastModified: $checkedConvert(
-          json, 'last_modified', (v) => DateTime.parse(v as String)),
+      created: $checkedConvert(json, 'created',
+          (v) => v == null ? null : DateTime.parse(v as String)),
+      lastModified: $checkedConvert(json, 'last_modified',
+          (v) => v == null ? null : DateTime.parse(v as String)),
       version: $checkedConvert(json, 'version', (v) => v as String),
       type: $checkedConvert(json, 'type', (v) => v as String),
       plain: $checkedConvert(json, 'plain', (v) => v as Map<String, dynamic>),
+      file: $checkedConvert(
+          json, 'file', (v) => v == null ? null : FileMeta.fromJson(v)),
     );
     return val;
   }, fieldKeyMap: const {
@@ -92,11 +94,12 @@ Map<String, dynamic> _$RecordMetaToJson(RecordMeta instance) =>
       'record_id': instance.recordID,
       'writer_id': instance.writerID,
       'user_id': instance.userID,
-      'created': instance.created.toIso8601String(),
-      'last_modified': instance.lastModified.toIso8601String(),
+      'created': instance.created?.toIso8601String(),
+      'last_modified': instance.lastModified?.toIso8601String(),
       'version': instance.version,
       'type': instance.type,
       'plain': instance.plain,
+      'file': instance.file?.toJson(),
     };
 
 FileMeta _$FileMetaFromJson(Map<String, dynamic> json) {
@@ -104,6 +107,7 @@ FileMeta _$FileMetaFromJson(Map<String, dynamic> json) {
     fileUrl: json['file_url'] as String,
     fileName: json['file_name'] as String,
     checksum: json['checksum'] as String,
+    compression: json['compression'] as String,
     size: json['size'] as int,
   );
 }
@@ -112,5 +116,6 @@ Map<String, dynamic> _$FileMetaToJson(FileMeta instance) => <String, dynamic>{
       'file_url': instance.fileUrl,
       'file_name': instance.fileName,
       'checksum': instance.checksum,
+      'compression': instance.compression,
       'size': instance.size,
     };

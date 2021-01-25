@@ -66,7 +66,7 @@ class Record {
   Map<String, dynamic> toJson() => _$RecordToJson(this);
 }
 
-@JsonSerializable(nullable: false, explicitToJson: true, checked: true)
+@JsonSerializable(nullable: true, explicitToJson: true, checked: true)
 class RecordMeta {
   @JsonKey(name: 'record_id')
   String recordID;
@@ -84,7 +84,7 @@ class RecordMeta {
   String type;
   @JsonKey(name: 'plain')
   Map plain;
-  // TODO: add filemeta
+  FileMeta file;
 
   RecordMeta({
     this.recordID,
@@ -94,13 +94,16 @@ class RecordMeta {
     this.lastModified,
     this.version,
     this.type,
-    this.plain
+    this.plain,
+    this.file
   });
 
   factory RecordMeta.fromValidJsonString(String json) {
     dynamic parsedMeta = jsonDecode(json);
+    dynamic parsedFileMeta = jsonDecode(parsedMeta["file_meta"]);
     dynamic parsedPlain = jsonDecode(parsedMeta["plain"]);
     parsedMeta["plain"] = parsedPlain;
+    parsedMeta["file"] = parsedFileMeta;
     return RecordMeta.fromJson(parsedMeta);
   }
 
@@ -108,19 +111,22 @@ class RecordMeta {
   Map<String, dynamic> toJson() => _$RecordMetaToJson(this);
 }
 
-@JsonSerializable(nullable: false)
+
+@JsonSerializable(nullable: true)
 class FileMeta {
   @JsonKey(name: 'file_url')
   String fileUrl;
   @JsonKey(name: 'file_name')
   String fileName;
   String checksum;
+  String compression;
   int size;
 
   FileMeta({
     this.fileUrl,
     this.fileName,
     this.checksum,
+    this.compression,
     this.size
   });
 

@@ -27,13 +27,31 @@ public class E3dbSerializer {
         metaMap.put("version", meta.version());
         metaMap.put("type", meta.type());
         metaMap.put("plain", new JSONObject(meta.plain()).toString());
-        // TODO filemeta
+        metaMap.put("file_meta", fileMetaToJson(meta.file()));
         try {
             return mapper.writeValueAsString(metaMap);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    static String fileMetaToJson(FileMeta meta) {
+        if (meta == null) {
+            return null;
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("file_url", meta.fileUrl() != null ? meta.fileUrl() : "");
+        map.put("file_name", meta.fileName());
+        map.put("checksum", meta.checksum());
+        map.put("compression", meta.compression());
+        map.put("long", meta.size());
+        try {
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     static String recordToJson(Record record) {
         Map<String, Object> map = new HashMap<>();
