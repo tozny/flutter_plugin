@@ -63,4 +63,32 @@ public class E3dbSerializer {
             throw new RuntimeException(e);
         }
     }
+
+    static Realm realmFromJson(String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            RealmConfigSerializer realmConfig = mapper.readValue(json, RealmConfigSerializer.class);
+            return new Realm(realmConfig.realmName, realmConfig.appName, realmConfig.brokerTargetURL, realmConfig.apiURL);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String partialIdClient(PartialIdentityClient id) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("client_credentials", id.getClient().);
+        map.put("identity_config", );
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.pu
+        try {
+            return mapper.writeValueAsString(id);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static Config getConfig(Client client) {
+        return new Config(client.apiKey, this.apiSecret, this.clientId, "", this.host.toString(), Base64.encodeURL(this.privateEncryptionKey), Base64.encodeURL(this.privateSigningKey));
+    }
 }

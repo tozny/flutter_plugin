@@ -66,6 +66,44 @@ class Record {
   Map<String, dynamic> toJson() => _$RecordToJson(this);
 }
 
+@JsonSerializable(nullable: false, explicitToJson: true, checked: true)
+class PartialIdentity {
+  @JsonKey(name: "client_config")
+  ClientCredentials credentials;
+  @JsonKey(name: "identity_config")
+  IdentityConfig identityConfig;
+
+  PartialIdentity({
+    this.identityConfig,
+    this.credentials
+  });
+}
+
+@JsonSerializable(nullable: false, explicitToJson: true, checked: true)
+class IdentityConfig {
+  @JsonKey(name:"api_url")
+  String apiURL;
+  @JsonKey(name:"app_name")
+  String appName;
+  @JsonKey(name:"broker_target_url")
+  String brokerTargetURL;
+  @JsonKey(name:"realm_name")
+  String realmName;
+  @JsonKey(name:"user_id")
+  int userId;
+  @JsonKey(name:"username")
+  String username;
+
+  IdentityConfig({
+    this.realmName,
+    this.userId,
+    this.apiURL,
+    this.appName,
+    this.brokerTargetURL,
+    this.username,
+  });
+}
+
 @JsonSerializable(nullable: true, explicitToJson: true, checked: true)
 class RecordMeta {
   @JsonKey(name: 'record_id')

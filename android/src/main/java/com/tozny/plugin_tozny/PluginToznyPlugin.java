@@ -68,6 +68,11 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
           }
           break;
 
+          case "registerIdentity": {
+              this.registerIdentity(call, result);
+          }
+          break;
+
           default: {
               result.notImplemented();
           }
@@ -85,6 +90,12 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
       HashMap clientCredentialJson = call.argument("client_credentials");
       Config clientConfig = Config.fromJson(new ObjectMapper().writeValueAsString(clientCredentialJson));
       return new ClientBuilder().fromConfig(clientConfig).build();
+  }
+
+  public Realm initRealmFromFlutter(@NonNull MethodCall call) throws E3DBCryptoException, IOException {
+      HashMap json = call.argument("realm_config");
+      Realm realm = E3dbSerializer.realmFromJson(new ObjectMapper().writeValueAsString(json));
+      return realm;
   }
 
   public void readRecord(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
@@ -126,6 +137,38 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
                       }
                       else {
                           result.error("RegistrationError", r.asError().other().getMessage(), null);
+                      }
+                  }
+              });
+          } catch (Exception e) {
+              result.error("GenericSDKError", e.getMessage(), null);
+          }
+      } catch (Exception e) {
+          result.error("ParsingFieldsError", e.getMessage(), null);
+      }
+  }
+
+  public void registerIdentity(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
+      try {
+          String username = call.argument("username");
+          String password = call.argument("password");
+          String token = call.argument("token");
+          String email = call.argument("email");
+          String firstName = call.argument("first_name");
+          String lastName = call.argument("last_name");
+          String emailEACPExpiry = call.argument("email_eacp_expiry");
+          try {
+              Realm realm = this.initRealmFromFlutter(call);
+              realm.register(username, password, token, email, firstName, lastName, Integer.parseInt(emailEACPExpiry), new ResultHandler<PartialIdentityClient>() {
+                  @Override
+                  public void handle(com.tozny.e3db.Result<PartialIdentityClient> r) {
+                      if(!r.isError()) {
+                          PartialIdentityClient idClient = r.asValue();
+                          idClient.getClient().
+                          result.success(E3dbSerializer.partialIdClient(idClient));
+                      }
+                      else {
+                          result.error("IdentityRegistrationError", r.asError().other().getMessage(), null);
                       }
                   }
               });
