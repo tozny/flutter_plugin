@@ -28,11 +28,21 @@ class PluginTozny {
   Future<Record> writeRecord(String type, Map<String, String> data, Map<String, String> plain) async {
     final dynamic recordJson = await _channel.invokeMethod('writeRecord',
         {"type": type,
-         "data": data,
-         "plain": plain,
-         "client_credentials": this.credentials.toJson()
+          "data": data,
+          "plain": plain,
+          "client_credentials": this.credentials.toJson()
         });
     return Record.fromValidJsonString(recordJson);
+  }
+
+  Future<RecordMeta> writeFile(String type, String fileURL, Map<String, String> plain) async {
+    final dynamic json = await _channel.invokeMethod('writeFile',
+        {"type": type,
+          "file_path": fileURL,
+          "plain": plain,
+          "client_credentials": this.credentials.toJson()
+        });
+    return RecordMeta.fromValidJsonString(json);
   }
 
   Future<void> share(String type, String readerID) async {

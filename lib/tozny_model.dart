@@ -42,8 +42,6 @@ class ClientCredentials {
   Map<String, dynamic> toJson() => _$ClientCredentialsToJson(this);
 }
 
-
-
 @JsonSerializable(nullable: false, explicitToJson: true, checked: true)
 class Record {
   Map data;

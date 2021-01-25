@@ -17,8 +17,6 @@ public class E3dbSerializer {
     private static final ObjectMapper mapper = new ObjectMapper();
     private static DateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ");
 
-
-    @RequiresApi(api = Build.VERSION_CODES.O)
     static String recordMetaToJson(RecordMeta meta) {
         Map<String, Object> metaMap = new HashMap<>();
         metaMap.put("record_id", meta.recordId().toString());

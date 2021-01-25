@@ -7,6 +7,7 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.UUID;
@@ -44,6 +45,11 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
 
           case "writeRecord": {
               this.writeRecord(call, result);
+          }
+          break;
+
+          case "writeFile": {
+              this.writeFile(call, result);
           }
           break;
 
@@ -150,6 +156,34 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
                       }
                   }
               });
+          } catch (Exception e) {
+              result.error("GenericSDKError", e.getMessage(), null);
+          }
+      } catch (Exception e) {
+          result.error("ParsingFieldsError", e.getMessage(), null);
+      }
+  }
+
+  public void writeFile(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
+      try {
+          Client client = this.initClientFromFlutter(call);
+          HashMap<String, String> plain = call.argument("plain");
+          String filePath = call.argument("file_path");
+          String recordType = call.argument("type");
+
+          try {
+              File file = new File(filePath);
+              client.writeFile(recordType, file, plain, new ResultHandler<RecordMeta>() {
+                    @Override
+                    public void handle(com.tozny.e3db.Result<RecordMeta> r) {
+                      if(!r.isError()) {
+                          RecordMeta meta = r.asValue();
+                          result.success(E3dbSerializer.recordMetaToJson(meta));
+                      } else {
+                          result.error("WriteRecordError", r.asError().other().getMessage(), null);
+                      }
+          }
+          });
           } catch (Exception e) {
               result.error("GenericSDKError", e.getMessage(), null);
           }
