@@ -74,21 +74,54 @@ public class E3dbSerializer {
         }
     }
 
-    static String partialIdClient(PartialIdentityClient id) {
+    static String partialIdClientToJson(PartialIdentityClient id) {
         Map<String, Object> map = new HashMap<>();
-        map.put("client_credentials", id.getClient().);
-        map.put("identity_config", );
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.pu
         try {
-            return mapper.writeValueAsString(id);
+            map.put("client_credentials", id.getClient().getConfig().json());
+            map.put("identity_config", E3dbSerializer.idConfigToJson(id.getIdentityConfig()));
+            return mapper.writeValueAsString(map);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    static Config getConfig(Client client) {
-        return new Config(client.apiKey, this.apiSecret, this.clientId, "", this.host.toString(), Base64.encodeURL(this.privateEncryptionKey), Base64.encodeURL(this.privateSigningKey));
+    static String idClientToJson(IdentityClient id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map.put("client_credentials", id.getClient().getConfig().json());
+            map.put("identity_config", E3dbSerializer.idConfigToJson(id.getIdentityConfig()));
+            map.put("user_agent_token", E3dbSerializer.userAgentTokenToJson(id.getToken()));
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String userAgentTokenToJson(AgentToken tok) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map.put("access_token", tok.getToken());
+            map.put("token_type", tok.getTokenType());
+            map.put("expiry", tok.getExpiry());
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String idConfigToJson(IdentityConfig id) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("api_url", id.getApiURL().getPath());
+            map.put("app_name", id.getAppName());
+            map.put("broker_target_url", id.getBrokerTargetUrl());
+            map.put("realm_name", id.getRealmName());
+            map.put("user_id", id.getUserId());
+            map.put("username", id.getUsername());
+
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
