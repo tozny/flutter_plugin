@@ -1,9 +1,5 @@
 package com.tozny.plugin_tozny;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
