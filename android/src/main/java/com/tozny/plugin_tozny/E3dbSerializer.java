@@ -1,9 +1,5 @@
 package com.tozny.plugin_tozny;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
@@ -58,6 +54,67 @@ public class E3dbSerializer {
         map.put("meta_data", E3dbSerializer.recordMetaToJson(record.meta()));
         map.put("data", record.data());
         try {
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static Realm realmFromJson(String json) {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            RealmConfigSerializer realmConfig = mapper.readValue(json, RealmConfigSerializer.class);
+            return new Realm(realmConfig.realmName, realmConfig.appName, realmConfig.brokerTargetURL, realmConfig.apiURL);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String partialIdClientToJson(PartialIdentityClient id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map.put("client_credentials", id.getClient().getConfig().json());
+            map.put("identity_config", E3dbSerializer.idConfigToJson(id.getIdentityConfig()));
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String idClientToJson(IdentityClient id) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map.put("client_credentials", id.getClient().getConfig().json());
+            map.put("identity_config", E3dbSerializer.idConfigToJson(id.getIdentityConfig()));
+            map.put("user_agent_token", E3dbSerializer.userAgentTokenToJson(id.getToken()));
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String userAgentTokenToJson(AgentToken tok) {
+        Map<String, Object> map = new HashMap<>();
+        try {
+            map.put("access_token", tok.getToken());
+            map.put("token_type", tok.getTokenType());
+            map.put("expiry", tok.getExpiry());
+            return mapper.writeValueAsString(map);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    static String idConfigToJson(IdentityConfig id) {
+        try {
+            Map<String, Object> map = new HashMap<>();
+            map.put("api_url", id.getApiURL().getPath());
+            map.put("app_name", id.getAppName());
+            map.put("broker_target_url", id.getBrokerTargetUrl());
+            map.put("realm_name", id.getRealmName());
+            map.put("user_id", id.getUserId());
+            map.put("username", id.getUsername());
+
             return mapper.writeValueAsString(map);
         } catch (Exception e) {
             throw new RuntimeException(e);
