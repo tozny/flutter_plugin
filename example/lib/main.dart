@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'dart:io';
+import 'dart:math';
 import 'package:flutter/services.dart';
 import 'package:plugin_tozny/plugin_tozny.dart';
+import 'package:plugin_tozny/plugin_identity.dart';
+import 'package:plugin_tozny/plugin_realm.dart';
 import 'package:plugin_tozny/tozny_model.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:isolate';
 import 'dart:developer' as developer;
 
 void main() {
@@ -49,11 +56,55 @@ class _MyAppState extends State<MyApp> {
     String registrationToken = "TOKEN_HERE";
     try {
       var client = await register(registrationToken);
+      if (await Permission.storage.request().isGranted) {
+        var resp = writeFile(client);
+      } else {
+        await Permission.storage.request();
+      }
       Record writtenRecord = await writeRecord(client);
       Record tozstoreRecord = await readRecord(writtenRecord.metaData.recordID, client);
       developer.log(tozstoreRecord.toJson().toString());
     } catch(e) {
       developer.log("example flow failed because $e");
+    }
+  }
+
+  void registerIdentityAndLogin(RealmConfig config, String regToken) async {
+    var realmClient = new PluginRealm(config);
+    Random random = new Random();
+    var username = random.nextInt(10000).toString();
+    try {
+      print("before register");
+      await realmClient.register(username, "pass", regToken,
+          "test@example.com", "test", "user", 60);
+      print("logging in");
+      var loggedInIdentity = await realmClient.login(username, "pass");
+      print("writing record with identity");
+      var record = await writeRecord(loggedInIdentity.client);
+      print(record.toJson().toString());
+    } catch (e) {
+      print("error $e");
+    }
+  }
+
+  Future<RecordMeta> writeFile(PluginTozny client) async {
+    try {
+      final directory = await getApplicationDocumentsDirectory();
+      var filename = "test_file.txt";
+      final path = '${directory.path}/$filename';
+      var file = new File(path);
+      var sink = file.openWrite();
+      sink.write('some encrypted content');
+      await sink.close();
+      var plain = {"plain":"file"};
+      developer.log(file.absolute.path);
+      var recordMeta = await client.writeFile("testFileType1", file.absolute.path, plain);
+      setState(() {
+        _platformVersion = "written file record: " + recordMeta.recordID;
+      });
+      return recordMeta;
+    } catch(e) {
+      developer.log("sdkfjlaskjdf" + e.toString());
     }
   }
 

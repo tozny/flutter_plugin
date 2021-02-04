@@ -7,11 +7,15 @@ import io.flutter.plugin.common.MethodCall;
 import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+
 import com.tozny.e3db.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 
 /** PluginToznyPlugin */
@@ -22,15 +26,23 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
   /// when the Flutter Engine is detached from the Activity
   private MethodChannel channel;
 
-
-  @Override
-  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
-    channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "plugin_tozny");
-    channel.setMethodCallHandler(this);
+  // Empty login handler
+  private class LoginHandler implements LoginActionHandler {
+      @Override
+      public Map<String, Object> handleAction(LoginAction loginAction) {
+          HashMap<String, Object> data = new HashMap<>();
+          return data;
+      }
   }
 
   @Override
-  public void onMethodCall(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
+  public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
+      channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "plugin_tozny");
+      channel.setMethodCallHandler(this);
+  }
+
+  @Override
+  public void onMethodCall(@NonNull MethodCall call, @NonNull io.flutter.plugin.common.MethodChannel.Result result) {
       switch(call.method) {
           case "getPlatformVersion": {
               result.success("Android " + android.os.Build.VERSION.RELEASE);
@@ -47,6 +59,11 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
           }
           break;
 
+          case "writeFile": {
+              this.writeFile(call, result);
+          }
+          break;
+
           case "share": {
               this.share(call, result);
           }
@@ -59,6 +76,16 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
 
           case "register": {
               this.register(call, result);
+          }
+          break;
+
+          case "registerIdentity": {
+              this.registerIdentity(call, result);
+          }
+          break;
+
+          case "loginIdentity": {
+              this.loginIdentity(call, result);
           }
           break;
 
@@ -79,6 +106,12 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
       HashMap clientCredentialJson = call.argument("client_credentials");
       Config clientConfig = Config.fromJson(new ObjectMapper().writeValueAsString(clientCredentialJson));
       return new ClientBuilder().fromConfig(clientConfig).build();
+  }
+
+  public Realm initRealmFromFlutter(@NonNull MethodCall call) throws E3DBCryptoException, IOException {
+      HashMap json = call.argument("realm_config");
+      Realm realm = E3dbSerializer.realmFromJson(new ObjectMapper().writeValueAsString(json));
+      return realm;
   }
 
   public void readRecord(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
@@ -131,10 +164,71 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
       }
   }
 
-  public void writeRecord(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
+  public void registerIdentity(@NonNull final MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
       try {
-          Client client = this.initClientFromFlutter(call);
-          HashMap<String, String> fields = call.argument("data");
+          String username = call.argument("username");
+          String password = call.argument("password");
+          String token = call.argument("token");
+          String email = call.argument("email");
+          String firstName = call.argument("first_name");
+          String lastName = call.argument("last_name");
+          String emailEACPExpiry = call.argument("email_eacp_expiry");
+          try {
+              HashMap json = call.argument("realm_config");
+              Realm realm = E3dbSerializer.realmFromJson(new ObjectMapper().writeValueAsString(json));
+              realm.register(username, password, token, email, firstName, lastName, Integer.parseInt(emailEACPExpiry), new ResultHandler<PartialIdentityClient>() {
+                   @Override
+                   public void handle(com.tozny.e3db.Result<PartialIdentityClient> r) {
+                      if(!r.isError()) {
+                          PartialIdentityClient idClient = r.asValue();
+                          result.success(E3dbSerializer.partialIdClientToJson(idClient));
+                      }
+                      else {
+                          result.error("IdentityRegistrationError", r.asError().other().getMessage(), null);
+                      }
+                  }
+              });
+          } catch (Exception e) {
+              result.error("GenericSDKError", e.getMessage(), null);
+          }
+      } catch (Exception e) {
+          result.error("ParsingFieldsError", e.getMessage(), null);
+      }
+
+  }
+
+  public void loginIdentity(@NonNull final MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
+      try {
+          String username = call.argument("username");
+          String password = call.argument("password");
+          try {
+              HashMap json = call.argument("realm_config");
+              Realm realm = E3dbSerializer.realmFromJson(new ObjectMapper().writeValueAsString(json));
+
+              realm.login(username, password, new LoginHandler(), new ResultHandler<IdentityClient>() {
+                  @Override
+                  public void handle(com.tozny.e3db.Result<IdentityClient> r) {
+                      if(!r.isError()) {
+                          IdentityClient idClient = r.asValue();
+                          result.success(E3dbSerializer.idClientToJson(idClient));
+                      }
+                      else {
+                          result.error("IdentityLoginError", r.asError().other().getMessage(), null);
+                      }
+                  }
+              });
+          } catch (Exception e) {
+              result.error("GenericSDKError", e.getMessage(), null);
+          }
+      } catch (Exception e) {
+          result.error("ParsingFieldsError", e.getMessage(), null);
+      }
+  }
+
+    public void writeRecord(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
+        try {
+            Client client = this.initClientFromFlutter(call);
+            HashMap<String, String> fields = call.argument("data");
           HashMap<String, String> plain = call.argument("plain");
           String recordType = call.argument("type");
           try {
@@ -150,6 +244,34 @@ public class PluginToznyPlugin implements FlutterPlugin, MethodCallHandler {
                       }
                   }
               });
+          } catch (Exception e) {
+              result.error("GenericSDKError", e.getMessage(), null);
+          }
+      } catch (Exception e) {
+          result.error("ParsingFieldsError", e.getMessage(), null);
+      }
+  }
+
+  public void writeFile(@NonNull MethodCall call, @NonNull final io.flutter.plugin.common.MethodChannel.Result result) {
+      try {
+          Client client = this.initClientFromFlutter(call);
+          HashMap<String, String> plain = call.argument("plain");
+          String filePath = call.argument("file_path");
+          String recordType = call.argument("type");
+
+          try {
+              File file = new File(filePath);
+              client.writeFile(recordType, file, plain, new ResultHandler<RecordMeta>() {
+                    @Override
+                    public void handle(com.tozny.e3db.Result<RecordMeta> r) {
+                      if(!r.isError()) {
+                          RecordMeta meta = r.asValue();
+                          result.success(E3dbSerializer.recordMetaToJson(meta));
+                      } else {
+                          result.error("WriteRecordError", r.asError().other().getMessage(), null);
+                      }
+          }
+          });
           } catch (Exception e) {
               result.error("GenericSDKError", e.getMessage(), null);
           }

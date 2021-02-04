@@ -29,6 +29,7 @@ android {
 
     defaultConfig {
         minSdkVersion 23
+        targetSdkVersion 29
     }
     lintOptions {
         disable 'InvalidPackage'
@@ -40,7 +41,7 @@ android {
             maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
         }
 
-        implementation ('com.tozny.e3db:e3db-client-android:6.0.0@aar') {
+        implementation ('com.tozny.e3db:e3db-client-android:6.0.2@aar'){
             transitive = true
         }
 
@@ -53,4 +54,8 @@ android {
             compile.exclude group: "junit", module: "junit"
         }
     }
+}
+
+dependencies {
+    implementation 'androidx.work:work-runtime:2.2.0'
 }
