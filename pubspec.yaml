@@ -1,6 +1,6 @@
 name: plugin_tozny
 description: Tozny flutter plugin to communicate with native SDKs.
-version: 0.0.1
+version: 0.0.3
 author: Tozny
 homepage: https://github.com/tozny/flutter-plugin
 
@@ -10,12 +10,12 @@ environment:
 
 dependencies:
   uuid: 2.2.2
+  json_serializable: ^3.5.1
   flutter:
     sdk: flutter
 
 dev_dependencies:
   build_runner: ^1.10.13
-  json_serializable: ^3.5.1
   flutter_test:
     sdk: flutter
 
