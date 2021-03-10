@@ -23,7 +23,6 @@ class PluginRealm {
           "email_eacp_expiry": emailEACPExpiry.toString(),
           "realm_config": this.config.toJson()
         });
-    print(json);
     return PartialIdentityConfig.fromValidJsonString(json);
   }
 

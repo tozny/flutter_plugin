@@ -18,3 +18,14 @@ the generated files are created by running `flutter pub run build_runner build`.
 
 When developing native portions of the plugin a full re-compile is needed, hot
 restarts don't reflect current state.
+
+## Publishing
+
+* Checkout code from branch
+* Write code, test code
+* Update plugin version in `pubspec.yaml` file, `CHANGELOG.md` and `README.md` as needed
+* Before committing changes for review, run `flutter pub publish --dry-run`
+* Commit & PR changes
+* Once PR is approved, merge into trunk
+* Check out trunk, push a git tag matching the version tag in `pubspec.yaml`
+* Run `flutter pub publish`
