@@ -15,7 +15,9 @@ Use in your Dart or Flutter project by adding `plugin_tozny` as a dependency in 
 ```
 
 ### End-to-end TozId Identity Registration, Login, & TozStore encrypted filed storage example
- 
+
+After creating a Realm (using all lowercase characters) and [Registration Token](https://www.youtube.com/watch?v=L5ieMF9JZOg), update the example values for realm_name and registration token below, and then you can run the following example function to register a new Identity for that Realm, login as that Identity, and encrypt and write data to TozStore.
+
  ```dart
 import 'package:plugin_tozny/plugin_tozny.dart';
 import 'package:plugin_tozny/plugin_identity.dart';
@@ -38,7 +40,7 @@ void registerLoginStoreFileExample() async {
       var realmIdentity = await realmClient.register(
           username,
           password,
-          '10a0cd84416e0950e345EXAMPLE813ec34a32ce1e9f76e3c192c932d2add',
+          '10a0cd84416e0950e345EXAMPLE813ec34a32ce1e9f76e3c192c932d2add', // Your Registration Token goes here
           email,
           'FirstName',
           'LastName',
@@ -51,7 +53,7 @@ void registerLoginStoreFileExample() async {
             "Logged  into Realm as Identity ${loggedInIdentity.config.toJson().toString()}");
 
         try {
-          var absoluteFilePath = writeExampleFile();
+          var absoluteFilePath = await writeExampleFile();
           var recordType = "android-gyroscope-sensor-data";
           var searchableRecordMetadata = {
             "sensor-category": "movement",
@@ -88,7 +90,7 @@ Future<String> writeExampleFile() async {
 }
 ```
 
-Running the example above after replacing the example values (realm name, registration token, username and email) 
+Running the example above after replacing the example values (realm name, registration token, username and email)
 will output text similar to the below to the emulator or device console:
 
 ```text
