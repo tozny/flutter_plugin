@@ -19,6 +19,12 @@ the generated files are created by running `flutter pub run build_runner build`.
 When developing native portions of the plugin a full re-compile is needed, hot
 restarts don't reflect current state.
 
+## Updating Dependencies
+
+Dependencies may potentiatially be out of date. In order to identify any out of date dependencies run `flutter pub outdated` in the directory that contains `pubspec.yaml`. If there are outdated direct dependencies listed in the command's output their respective versions should be updated in `pubspec.yaml`.
+
+Run `flutter pub get` to update the package dependencies to the new versions. `pubspec.lock` will be updated to save the new concrete package versions
+
 ## Publishing
 
 * Checkout code from branch
