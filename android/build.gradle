@@ -6,7 +6,7 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
-        maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
+        maven { url "http://github.com/terl/lazysodium-android" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
@@ -18,7 +18,7 @@ rootProject.allprojects {
         google()
         jcenter()
         mavenCentral()
-        maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
+        maven { url "http://github.com/terl/lazysodium-android" }
     }
 }
 
@@ -38,13 +38,13 @@ android {
     dependencies {
         repositories {
             mavenCentral()
-            maven { url "https://dl.bintray.com/terl/lazysodium-maven" }
+            maven { url "http://github.com/terl/lazysodium-android" }
         }
 
-        implementation ('com.tozny.e3db:e3db-client-android:6.0.2@aar'){
+        implementation ('com.tozny.e3db:e3db-client-android:7.2.1@aar'){
             transitive = true
         }
-
+        
         implementation 'com.fasterxml.jackson.core:jackson-core:2.9.0'
         implementation 'com.fasterxml.jackson.core:jackson-annotations:2.9.0'
         implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.0'
