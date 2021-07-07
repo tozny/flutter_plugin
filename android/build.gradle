@@ -6,7 +6,6 @@ buildscript {
         google()
         jcenter()
         mavenCentral()
-        maven { url "https://mvnrepository.com/artifact/com.goterl.lazycode/lazysodium-android" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.5.0'
@@ -18,7 +17,6 @@ rootProject.allprojects {
         google()
         jcenter()
         mavenCentral()
-        maven { url "https://mvnrepository.com/artifact/com.goterl.lazycode/lazysodium-android" }
     }
 }
 
@@ -38,7 +36,6 @@ android {
     dependencies {
         repositories {
             mavenCentral()
-            maven { url "https://mvnrepository.com/artifact/com.goterl.lazycode/lazysodium-android" }
         }
 
         implementation ('com.tozny.e3db:e3db-client-android:7.2.2@aar'){
