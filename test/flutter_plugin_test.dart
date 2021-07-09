@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:plugin_tozny/plugin_tozny.dart';
+import 'package:plugin_tozny/plugin_tozny_ios.dart';
+import 'package:plugin_tozny/tozny_model.dart';
 
 void main() {
   const MethodChannel channel = MethodChannel('plugin_tozny');
@@ -17,7 +20,19 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await PluginTozny.platformVersion, '42');
+  test('writeRecord', () async {
+    ClientCredentials creds = ClientCredentials(apiKey: "",
+                      apiSecret: "",
+                      clientId: "",
+                      publicKey: "",
+                      privateKey: "",
+                      publicSignKey: "",
+                      privateSigningKey: "",
+                      host: "",
+                      email: "");
+    var plugin = PluginToznyIOS(creds);
+    var data = {"test": "example", "another": "encrypted"};
+    var plain = {"plain": "hello", "search": "world"};
+    expect(await plugin.writeRecord("test-data", data, plain), "42");
   });
 }
