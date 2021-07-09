@@ -1,0 +1,73 @@
+PODS:
+  - E3db (4.1.0-alpha.2):
+    - E3db/Core (= 4.1.0-alpha.2)
+  - E3db/Core (4.1.0-alpha.2):
+    - Sodium (~> 0.7)
+    - ToznyHeimdallr (~> 4.0)
+    - ToznySwish (~> 5.0.0)
+    - Valet (~> 3.1)
+  - Flutter (1.0.0)
+  - path_provider (0.0.1):
+    - Flutter
+  - "permission_handler (5.1.0+2)":
+    - Flutter
+  - plugin_tozny (0.0.1):
+    - E3db
+    - Flutter
+  - Result (4.1.0)
+  - Sodium (0.8.0)
+  - ToznyHeimdallr (4.0.1):
+    - ToznyHeimdallr/Core (= 4.0.1)
+  - ToznyHeimdallr/Core (4.0.1):
+    - Result (~> 4.1.0)
+  - ToznySwish (5.0.0):
+    - Result (~> 4.1)
+  - Valet (3.2.8)
+
+DEPENDENCIES:
+  - E3db (from `https://github.com/tozny/e3db-swift`)
+  - Flutter (from `Flutter`)
+  - path_provider (from `.symlinks/plugins/path_provider/ios`)
+  - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
+  - plugin_tozny (from `.symlinks/plugins/plugin_tozny/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Result
+    - Sodium
+    - ToznyHeimdallr
+    - ToznySwish
+    - Valet
+
+EXTERNAL SOURCES:
+  E3db:
+    :git: https://github.com/tozny/e3db-swift
+  Flutter:
+    :path: Flutter
+  path_provider:
+    :path: ".symlinks/plugins/path_provider/ios"
+  permission_handler:
+    :path: ".symlinks/plugins/permission_handler/ios"
+  plugin_tozny:
+    :path: ".symlinks/plugins/plugin_tozny/ios"
+
+CHECKOUT OPTIONS:
+  E3db:
+    :commit: fe2058e5e7058a27cd70e1f5aaed3c0102f83bed
+    :git: https://github.com/tozny/e3db-swift
+
+SPEC CHECKSUMS:
+  E3db: bd7478440ee6c8de9ed30b342409487c4072f3ea
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  path_provider: abfe2b5c733d04e238b0d8691db0cfd63a27a93c
+  permission_handler: ccb20a9fad0ee9b1314a52b70b76b473c5f8dab0
+  plugin_tozny: a4dc5e03c5e77d9de5234aff06d2b86fb3744927
+  Result: bd966fac789cc6c1563440b348ab2598cc24d5c7
+  Sodium: 63c0ca312a932e6da481689537d4b35568841bdc
+  ToznyHeimdallr: 69a0cff11b77ca36b304dede9009264473315695
+  ToznySwish: 22cb7f57696adbb98cb9078b278b756215169dc0
+  Valet: 16d0537d70db79d9ba953b9060b5da4fb8004e51
+
+PODFILE CHECKSUM: b3944187a873f8c4edb7eb5d6cd341e985de09a3
+
+COCOAPODS: 1.10.1
