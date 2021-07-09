@@ -37,7 +37,7 @@ public class E3dbSerializer {
         data.updateValue(meta.fileMeta, forKey: "file_meta")
     
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: Error
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: ERROR HANDLING
         return jsonString
     }
 
@@ -46,7 +46,7 @@ public class E3dbSerializer {
         data.updateValue(E3dbSerializer.recordMetaToJson(meta: record.meta), forKey: "meta")
         data.updateValue(record.data, forKey: "data")
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: Error
+        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: ERROR HANDLING
         return jsonString
     }
     
