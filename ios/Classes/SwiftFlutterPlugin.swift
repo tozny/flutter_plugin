@@ -15,14 +15,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         switch call.method {
         case "getPlatformVersion":
             result("iOS" + UIDevice.current.systemVersion)
-        case "loginIdentity":
-            result("loginIdentity")
-        case "share":
-            result("share")
         case "writeRecord":
-            result(self.writeRecord(_:result:))
+            result(self.writeRecord(call, result: result))
         default:
-            result("DEFAULT")
+            result(FlutterMethodNotImplemented)
         }
     }
     
@@ -42,8 +38,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         return nil // TODO: Fix optional return value. Likely fix is to unwrap jsonData initialization. 
     }
     
+    // MARK: WRITE RECORD
+    
     /// Writes a record using a `Client` built with values from the `FlutterMethodCall` object that
-    /// persisted across `FlutterMethodChanell`.
+    /// persisted across `FlutterMethodChannel`.
     ///
     public func writeRecord(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let client: Client = self.initClientFromFlutter(call)! // TODO: Forced unwrap will abort execution if nil is returned. 
@@ -62,19 +60,3 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         }
     }
 }
-
-//
-//    public func loginIdentity(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-//        let completion: E3dbCompletion<Identity>
-//        // TODO: Add type hints
-//        let username: String = call.value(forKey: "username") as! String
-//        let password: String = call.value(forKey: "password") as! String
-//        let realmConfig: String = call.value(forKey: "realm_config") as! String
-//
-//        let realm: Application = E3dbSerializer.realmFromJson(json: realmConfig)
-//        realm.login(username: username, password: password, actionHandler: (loginAction: IdentityLoginAction) -> [String: String], completionHandler: <#T##E3dbCompletion<Identity>##E3dbCompletion<Identity>##(E3dbResult<Identity>) -> Void#>)
-//
-//}
-//
-//    public func share(_ call: FlutterMethodCall, result: @escaping FlutterResult) {}
-//}
