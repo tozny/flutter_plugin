@@ -27,15 +27,20 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
     /// property and decode it into a `Config` object.
     ///
     /// `Config` is used to initialize `Client` object returned by method.
-    public func initClientFromFlutter(_ call: FlutterMethodCall) -> Client? {
-        let clientCredentialJson = call.value(forKey: "client_credentials") as! String
-        if let jsonData = clientCredentialJson.data(using: .utf8) {
-            let decoder = JSONDecoder()
-            let config: Config = try! decoder.decode(Config.self, from: jsonData)
+    public func initClientFromFlutter(_ call: FlutterMethodCall, result: @escaping FlutterResult) -> Client? {
+        if let args = call.arguments as? Dictionary<String, Any>,
+           let clientCredentialJson = args["client_credentials"] as? Dictionary<String, String> {
+            let jsonData = try? JSONSerialization.data(withJSONObject: clientCredentialJson, options: .prettyPrinted)
+            let jsonString = String(data: jsonData!, encoding: .utf8)
+            let data = jsonString?.data(using: .utf8)
+//            let flutterConfig: FlutterConfig
+            // flutterConfig.self -> knows how to serialize with sanitized credential names, has method to call client or e3db.Config constructor (return config) -> pass that into Client
+            let flutterConfig: FlutterConfig = try! JSONDecoder().decode(FlutterConfig.self, from: data!)
+            let config: Config = try! JSONDecoder().decode(Config.self, from: data!)
             let client: Client = Client(config: config)
             return client
         }
-        return nil // TODO: Fix optional return value. Likely fix is to unwrap jsonData initialization. 
+        return nil // TODO: Fix optional return value.
     }
     
     // MARK: WRITE RECORD
@@ -44,7 +49,7 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
     /// persisted across `FlutterMethodChannel`.
     ///
     public func writeRecord(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let client: Client = self.initClientFromFlutter(call)! // TODO: Forced unwrap will abort execution if nil is returned. 
+        let client: Client = self.initClientFromFlutter(call, result: result)! // TODO: Forced unwrap will abort execution if nil is returned.
         let fields: [String: String] = call.value(forKey: "data") as! [String : String] // TODO: Too many dangerous uses of casting
         let plain: [String: String] = call.value(forKey: "value") as! [String: String]
         let recordType: String = call.value(forKey: "type") as! String
