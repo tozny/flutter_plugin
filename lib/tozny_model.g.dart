@@ -9,17 +9,18 @@ part of 'tozny_model.dart';
 ClientCredentials _$ClientCredentialsFromJson(Map<String, dynamic> json) {
   return $checkedNew('ClientCredentials', json, () {
     final val = ClientCredentials(
-      apiKey: $checkedConvert(json, 'api_key_id', (v) => v as String),
-      apiSecret: $checkedConvert(json, 'api_secret', (v) => v as String),
-      clientId: $checkedConvert(json, 'client_id', (v) => v as String),
-      publicKey: $checkedConvert(json, 'public_key', (v) => v as String),
-      privateKey: $checkedConvert(json, 'private_key', (v) => v as String),
+      apiKey: $checkedConvert(json, 'api_key_id', (v) => v as String?),
+      apiSecret: $checkedConvert(json, 'api_secret', (v) => v as String?),
+      clientId: $checkedConvert(json, 'client_id', (v) => v as String?),
+      publicKey: $checkedConvert(json, 'public_key', (v) => v as String?),
+      privateKey: $checkedConvert(json, 'private_key', (v) => v as String?),
       publicSignKey:
-          $checkedConvert(json, 'public_signing_key', (v) => v as String),
+          $checkedConvert(json, 'public_signing_key', (v) => v as String?),
       privateSigningKey:
-          $checkedConvert(json, 'private_signing_key', (v) => v as String),
-      host: $checkedConvert(json, 'api_url', (v) => v as String),
-      email: $checkedConvert(json, 'client_email', (v) => v as String),
+          $checkedConvert(json, 'private_signing_key', (v) => v as String?),
+      host: $checkedConvert(json, 'api_url', (v) => v as String?),
+      email: $checkedConvert(json, 'client_email', (v) => v as String?),
+      clientName: $checkedConvert(json, 'client_name', (v) => v as String?),
     );
     return val;
   }, fieldKeyMap: const {
@@ -31,7 +32,8 @@ ClientCredentials _$ClientCredentialsFromJson(Map<String, dynamic> json) {
     'publicSignKey': 'public_signing_key',
     'privateSigningKey': 'private_signing_key',
     'host': 'api_url',
-    'email': 'client_email'
+    'email': 'client_email',
+    'clientName': 'client_name'
   });
 }
 
@@ -46,14 +48,20 @@ Map<String, dynamic> _$ClientCredentialsToJson(ClientCredentials instance) =>
       'public_signing_key': instance.publicSignKey,
       'private_signing_key': instance.privateSigningKey,
       'api_url': instance.host,
+      'client_name': instance.clientName,
     };
 
 Record _$RecordFromJson(Map<String, dynamic> json) {
   return $checkedNew('Record', json, () {
     final val = Record(
-      data: $checkedConvert(json, 'data', (v) => v as Map<String, dynamic>),
-      metaData:
-          $checkedConvert(json, 'meta_data', (v) => RecordMeta.fromJson(v)),
+      data: $checkedConvert(
+          json,
+          'data',
+          (v) => (v as Map<String, dynamic>?)?.map(
+                (k, e) => MapEntry(k, e as String),
+              )),
+      metaData: $checkedConvert(
+          json, 'meta_data', (v) => v == null ? null : RecordMeta.fromJson(v)),
     );
     return val;
   }, fieldKeyMap: const {'metaData': 'meta_data'});
@@ -61,22 +69,22 @@ Record _$RecordFromJson(Map<String, dynamic> json) {
 
 Map<String, dynamic> _$RecordToJson(Record instance) => <String, dynamic>{
       'data': instance.data,
-      'meta_data': instance.metaData.toJson(),
+      'meta_data': instance.metaData?.toJson(),
     };
 
 RecordMeta _$RecordMetaFromJson(Map<String, dynamic> json) {
   return $checkedNew('RecordMeta', json, () {
     final val = RecordMeta(
-      recordID: $checkedConvert(json, 'record_id', (v) => v as String),
-      writerID: $checkedConvert(json, 'writer_id', (v) => v as String),
-      userID: $checkedConvert(json, 'user_id', (v) => v as String),
+      recordID: $checkedConvert(json, 'record_id', (v) => v as String?),
+      writerID: $checkedConvert(json, 'writer_id', (v) => v as String?),
+      userID: $checkedConvert(json, 'user_id', (v) => v as String?),
       created: $checkedConvert(json, 'created',
           (v) => v == null ? null : DateTime.parse(v as String)),
       lastModified: $checkedConvert(json, 'last_modified',
           (v) => v == null ? null : DateTime.parse(v as String)),
-      version: $checkedConvert(json, 'version', (v) => v as String),
-      type: $checkedConvert(json, 'type', (v) => v as String),
-      plain: $checkedConvert(json, 'plain', (v) => v as Map<String, dynamic>),
+      version: $checkedConvert(json, 'version', (v) => v as String?),
+      type: $checkedConvert(json, 'type', (v) => v as String?),
+      plain: $checkedConvert(json, 'plain', (v) => v as Map<String, dynamic>?),
       file: $checkedConvert(
           json, 'file', (v) => v == null ? null : FileMeta.fromJson(v)),
     );
@@ -104,11 +112,11 @@ Map<String, dynamic> _$RecordMetaToJson(RecordMeta instance) =>
 
 FileMeta _$FileMetaFromJson(Map<String, dynamic> json) {
   return FileMeta(
-    fileUrl: json['file_url'] as String,
-    fileName: json['file_name'] as String,
-    checksum: json['checksum'] as String,
-    compression: json['compression'] as String,
-    size: json['size'] as int,
+    fileUrl: json['file_url'] as String?,
+    fileName: json['file_name'] as String?,
+    checksum: json['checksum'] as String?,
+    compression: json['compression'] as String?,
+    size: json['size'] as int?,
   );
 }
 
@@ -122,10 +130,10 @@ Map<String, dynamic> _$FileMetaToJson(FileMeta instance) => <String, dynamic>{
 
 RealmConfig _$RealmConfigFromJson(Map<String, dynamic> json) {
   return RealmConfig(
-    realmName: json['realm_name'] as String,
-    appName: json['app_name'] as String,
-    brokerTargetURL: json['broker_target_url'] as String,
-    apiURL: json['api_url'] as String,
+    realmName: json['realm_name'] as String?,
+    appName: json['app_name'] as String?,
+    brokerTargetURL: json['broker_target_url'] as String?,
+    apiURL: json['api_url'] as String?,
   );
 }
 
@@ -141,10 +149,10 @@ PartialIdentityConfig _$PartialIdentityConfigFromJson(
     Map<String, dynamic> json) {
   return $checkedNew('PartialIdentityConfig', json, () {
     final val = PartialIdentityConfig(
-      identityConfig: $checkedConvert(
-          json, 'identity_config', (v) => IdentityConfig.fromJson(v)),
-      credentials: $checkedConvert(
-          json, 'client_credentials', (v) => ClientCredentials.fromJson(v)),
+      identityConfig: $checkedConvert(json, 'identity_config',
+          (v) => v == null ? null : IdentityConfig.fromJson(v)),
+      credentials: $checkedConvert(json, 'client_credentials',
+          (v) => v == null ? null : ClientCredentials.fromJson(v)),
     );
     return val;
   }, fieldKeyMap: const {
@@ -156,19 +164,18 @@ PartialIdentityConfig _$PartialIdentityConfigFromJson(
 Map<String, dynamic> _$PartialIdentityConfigToJson(
         PartialIdentityConfig instance) =>
     <String, dynamic>{
-      'client_credentials': instance.credentials.toJson(),
-      'identity_config': instance.identityConfig.toJson(),
+      'client_credentials': instance.credentials?.toJson(),
+      'identity_config': instance.identityConfig?.toJson(),
     };
 
 IdentityClientConfig _$IdentityClientConfigFromJson(Map<String, dynamic> json) {
   return $checkedNew('IdentityClientConfig', json, () {
     final val = IdentityClientConfig(
-      identityConfig: $checkedConvert(
+      $checkedConvert(
           json, 'identity_config', (v) => IdentityConfig.fromJson(v)),
-      credentials: $checkedConvert(
+      $checkedConvert(
           json, 'client_credentials', (v) => ClientCredentials.fromJson(v)),
-      userAgentToken: $checkedConvert(
-          json, 'user_agent_token', (v) => AgentToken.fromJson(v)),
+      $checkedConvert(json, 'user_agent_token', (v) => AgentToken.fromJson(v)),
     );
     return val;
   }, fieldKeyMap: const {
@@ -189,9 +196,9 @@ Map<String, dynamic> _$IdentityClientConfigToJson(
 AgentToken _$AgentTokenFromJson(Map<String, dynamic> json) {
   return $checkedNew('AgentToken', json, () {
     final val = AgentToken(
-      accessToken: $checkedConvert(json, 'access_token', (v) => v as String),
-      tokenType: $checkedConvert(json, 'token_type', (v) => v as String),
-      expiry: $checkedConvert(json, 'expiry', (v) => v as int),
+      $checkedConvert(json, 'access_token', (v) => v as String),
+      $checkedConvert(json, 'token_type', (v) => v as String),
+      $checkedConvert(json, 'expiry', (v) => v as int),
     );
     return val;
   }, fieldKeyMap: const {
@@ -210,13 +217,13 @@ Map<String, dynamic> _$AgentTokenToJson(AgentToken instance) =>
 IdentityConfig _$IdentityConfigFromJson(Map<String, dynamic> json) {
   return $checkedNew('IdentityConfig', json, () {
     final val = IdentityConfig(
-      apiURL: $checkedConvert(json, 'api_url', (v) => v as String),
-      appName: $checkedConvert(json, 'appName', (v) => v as String),
+      apiURL: $checkedConvert(json, 'api_url', (v) => v as String?),
+      appName: $checkedConvert(json, 'appName', (v) => v as String?),
       brokerTargetUrl:
-          $checkedConvert(json, 'broker_target_url', (v) => v as String),
-      realmName: $checkedConvert(json, 'realm_name', (v) => v as String),
-      userId: $checkedConvert(json, 'user_id', (v) => v as int),
-      username: $checkedConvert(json, 'username', (v) => v as String),
+          $checkedConvert(json, 'broker_target_url', (v) => v as String?),
+      realmName: $checkedConvert(json, 'realm_name', (v) => v as String?),
+      userId: $checkedConvert(json, 'user_id', (v) => v as int?),
+      username: $checkedConvert(json, 'username', (v) => v as String?),
     );
     return val;
   }, fieldKeyMap: const {

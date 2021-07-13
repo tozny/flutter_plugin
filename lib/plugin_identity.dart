@@ -9,7 +9,7 @@ class PluginIdentity {
   const MethodChannel('plugin_tozny');
 
   IdentityClientConfig config;
-  PluginTozny client;
+  late PluginTozny client;
 
   PluginIdentity(this.config) {
     this.config = config;
