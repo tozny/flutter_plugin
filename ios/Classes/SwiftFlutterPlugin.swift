@@ -49,17 +49,19 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
     /// persisted across `FlutterMethodChannel`.
     ///
     public func writeRecord(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        let client: Client = self.initClientFromFlutter(call, result: result)! // TODO: Forced unwrap will abort execution if nil is returned.
-        let fields: [String: String] = call.value(forKey: "data") as! [String : String] // TODO: Too many dangerous uses of casting
-        let plain: [String: String] = call.value(forKey: "value") as! [String: String]
-        let recordType: String = call.value(forKey: "type") as! String
-        do {
-            let recordData: RecordData = RecordData(cleartext: fields)
-            client.write(type: recordType, data: recordData, plain: plain) { (writeResult) in
-                if let record = writeResult.value {
-                    result(E3dbSerializer.recordToJson(record: record))
-                } else {
-                    result(FlutterError(code: "WRITE", message: "Write data record failed", details: nil)) // TODO: ERROR
+        let client: Client = self.initClientFromFlutter(call, result: result)!
+        if let args = call.arguments as? Dictionary<String, Any>,
+           let fields = args["data"] as? [String: String],
+           let plain = args["plain"] as? [String: String],
+           let recordType = args["type"] as? String {
+            do {
+                let recordData: RecordData = RecordData(cleartext: fields)
+                client.write(type: recordType, data: recordData, plain: plain) { (writeResult) in
+                    if let record = writeResult.value {
+                        result(E3dbSerializer.recordToJson(record: record))
+                    } else {
+                        result(FlutterError(code: "WRITE", message: "Write data record failed", details: nil)) // TODO: ERROR
+                    }
                 }
             }
         }
