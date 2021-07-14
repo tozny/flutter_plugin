@@ -1,6 +1,7 @@
 import E3db
 
 public class E3dbSerializer {
+    // 
     static func realmFromJson(json: String) -> Application {
         let jsonData = json.data(using: .utf8)!
         let realmConfig: RealmConfigSerializer = try! JSONDecoder().decode(RealmConfigSerializer.self, from: jsonData)
@@ -15,7 +16,7 @@ public class E3dbSerializer {
         data.updateValue(E3dbSerializer.userAgentTokenToJson(tok: id.agentInfo()), forKey: "user_agent_token")
         
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: Error
+        let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString
     }
 
@@ -37,7 +38,7 @@ public class E3dbSerializer {
         data.updateValue(meta.fileMeta, forKey: "file_meta")
     
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: ERROR HANDLING
+        let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString
     }
 
@@ -46,19 +47,19 @@ public class E3dbSerializer {
         data.updateValue(E3dbSerializer.recordMetaToJson(meta: record.meta), forKey: "meta")
         data.updateValue(record.data, forKey: "data")
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: ERROR HANDLING
+        let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString
     }
     
     static func idConfigToJson(idConfig: IdentityConfig) -> String {
         let jsonData = try! JSONEncoder().encode(idConfig)
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: ERROR HANDLING
+        let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString
     }
     
     static func userAgentTokenToJson(tok: AgentToken) -> String {
-        let jsonData = try! JSONEncoder().encode(tok)
-        guard let jsonString = String(data: jsonData, encoding: .utf8) else { return "Something bad happened." } // TODO: ERROR HANDLING
-        return jsonString
+            let jsonData = try! JSONEncoder().encode(tok)
+            let jsonString = String(data: jsonData, encoding: .utf8)!
+            return jsonString
     }
 }
