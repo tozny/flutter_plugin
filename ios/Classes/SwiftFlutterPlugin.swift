@@ -36,7 +36,7 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
 //            let flutterConfig: FlutterConfig
             // flutterConfig.self -> knows how to serialize with sanitized credential names, has method to call client or e3db.Config constructor (return config) -> pass that into Client
             let flutterConfig: FlutterConfig = try! JSONDecoder().decode(FlutterConfig.self, from: data!)
-            let config: Config = try! JSONDecoder().decode(Config.self, from: data!)
+            let config: Config = FlutterConfig.encodeToE3dbConfig(flutterConfig: flutterConfig)
             let client: Client = Client(config: config)
             return client
         }

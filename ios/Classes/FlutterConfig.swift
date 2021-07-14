@@ -8,6 +8,41 @@
 import Foundation
 import E3db
 
+/// Source: https://stackoverflow.com/questions/44396500/how-do-i-use-custom-keys-with-swift-4s-decodable-protocol
+// wrapper to allow us to substitute our mapped string keys.
+struct AnyCodingKey : CodingKey {
+
+  var stringValue: String
+  var intValue: Int?
+
+  init(_ base: CodingKey) {
+    self.init(stringValue: base.stringValue, intValue: base.intValue)
+  }
+
+  init(stringValue: String) {
+    self.stringValue = stringValue
+  }
+
+  init(intValue: Int) {
+    self.stringValue = "\(intValue)"
+    self.intValue = intValue
+  }
+
+  init(stringValue: String, intValue: Int?) {
+    self.stringValue = stringValue
+    self.intValue = intValue
+  }
+}
+
+extension JSONDecoder.KeyDecodingStrategy {
+    static var convertFromFlutterConfigToE3dbConfig: JSONDecoder.KeyDecodingStrategy {
+        return .custom { codingkeys in
+            let key = AnyCodingKey(codingkeys.last!)
+            return key
+        }
+    }
+}
+
 /// Configuration to bridge Flutter's ClientCredentials model to E3DB's struct.
 public struct FlutterConfig: Codable {
 
@@ -87,11 +122,28 @@ public struct FlutterConfig: Codable {
     }
 }
 
-// extension FlutterConfig {
-//     /// A helper function to map FlutterConfig to an E3db Config.
-//     ///
-//     /// - Returns: A E3db Config.
-//     public static func generateE3dbConfig() -> Config? {
-        
-//     }
-// }
+ extension FlutterConfig {
+    /// A helper function to map FlutterConfig to an E3db Config.
+    ///
+    /// - Returns: A E3db Config.
+    public static func encodeToE3dbConfig(flutterConfig: FlutterConfig) -> Config {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = .prettyPrinted
+        do {
+            let jsonData = try encoder.encode(flutterConfig)
+            let decoder = JSONDecoder()
+            
+            /// JSONDecoder extension to map values of FlutterConfig keys to values of E3db Config keys
+            decoder.keyDecodingStrategy = .convertFromFlutterConfigToE3dbConfig
+            do {
+                let config: Config = try decoder.decode(Config.self, from: jsonData)
+                return config
+            } catch {
+                print(error)
+            }
+        } catch {
+            print(error)
+        }
+        return Config(clientName: "", clientId: UUID(), apiKeyId: "", apiSecret: "", publicKey: "", privateKey: "", baseApiUrl: URL(fileURLWithPath: ""), publicSigKey: "", privateSigKey: "")
+    }
+ }
