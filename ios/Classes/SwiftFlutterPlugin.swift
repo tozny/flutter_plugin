@@ -22,19 +22,16 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         }
     }
     
-    /// Initializer to create a client from context of `FlutterMethodCall` object.
-    /// Attempts to serialized client credentials from method call's "client_credentials"
-    /// property and decode it into a `Config` object.
+    /// Initializer to create a client from context of `FlutterMethodCall`
     ///
-    /// `Config` is used to initialize `Client` object returned by method.
+    /// A `FlutterConfig` object is necessary to bridge the Flutter client's `ClientCredentials`
+    /// to an E3DB `Config` object.
     public func initClientFromFlutter(_ call: FlutterMethodCall, result: @escaping FlutterResult) -> Client? {
         if let args = call.arguments as? Dictionary<String, Any>,
            let clientCredentialJson = args["client_credentials"] as? Dictionary<String, String> {
             let jsonData = try? JSONSerialization.data(withJSONObject: clientCredentialJson, options: .prettyPrinted)
             let jsonString = String(data: jsonData!, encoding: .utf8)
             let data = jsonString?.data(using: .utf8)
-//            let flutterConfig: FlutterConfig
-            // flutterConfig.self -> knows how to serialize with sanitized credential names, has method to call client or e3db.Config constructor (return config) -> pass that into Client
             let flutterConfig: FlutterConfig = try! JSONDecoder().decode(FlutterConfig.self, from: data!)
             let config: Config = FlutterConfig.encodeToE3dbConfig(flutterConfig: flutterConfig)
             let client: Client = Client(config: config)

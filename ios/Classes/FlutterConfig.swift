@@ -15,7 +15,7 @@ public struct FlutterConfig: Codable {
     public let clientName: String
 
     /// The client identifier
-    public let clientId: UUID
+    public let clientId: String
 
     /// The API key identifier
     public let apiKeyId: String
@@ -30,7 +30,7 @@ public struct FlutterConfig: Codable {
     public let privateKey: String
 
     /// The base URL for the E3DB service
-    public let baseApiUrl: URL
+    public let baseApiUrl: String
 
     /// The client's public signing key
     public let publicSigKey: String
@@ -38,28 +38,14 @@ public struct FlutterConfig: Codable {
     /// The client's secret signing key
     public let privateSigKey: String
 
-    /// Initializer to customize the configuration of the client. Typically, library users will
-    /// use the `Client.register(token:clientName:apiUrl:completion:)` method which will supply
-    /// an initialized `Config` object. Use this initializer if you register with the other
-    /// registration method, `Client.register(token:clientName:publicKey:apiUrl:completion:)`.
-    /// Pass this object to the `Client(config:)` initializer to create a new `Client`.
-    ///
-    /// - Parameters:
-    ///   - clientName: The name for this client
-    ///   - clientId: The client identifier
-    ///   - apiKeyId: The API key identifier
-    ///   - apiSecret: The API secret for making authenticated calls
-    ///   - publicKey: The client's public key
-    ///   - privateKey: The client's secret key
-    ///   - baseApiUrl: The base URL for the E3DB service
     public init(
         clientName: String,
-        clientId: UUID,
+        clientId: String,
         apiKeyId: String,
         apiSecret: String,
         publicKey: String,
         privateKey: String,
-        baseApiUrl: URL,
+        baseApiUrl: String,
         publicSigKey: String,
         privateSigKey: String
     ) {
@@ -93,7 +79,9 @@ public struct FlutterConfig: Codable {
     ///
     /// - Returns: A E3db Config.
     public static func encodeToE3dbConfig(flutterConfig: FlutterConfig) -> Config {
-        let config: Config = Config(clientName: flutterConfig.clientName, clientId: flutterConfig.clientId, apiKeyId: flutterConfig.apiKeyId, apiSecret: flutterConfig.apiSecret, publicKey: flutterConfig.publicKey, privateKey: flutterConfig.privateKey, baseApiUrl: flutterConfig.baseApiUrl, publicSigKey: flutterConfig.publicSigKey, privateSigKey: flutterConfig.privateSigKey)
+        let clientId: UUID = UUID(uuidString: flutterConfig.clientId)! // TODO: Forced unwrapping
+        let baseApiUrl: URL = URL(string: flutterConfig.baseApiUrl)!
+        let config: Config = Config(clientName: flutterConfig.clientName, clientId: clientId, apiKeyId: flutterConfig.apiKeyId, apiSecret: flutterConfig.apiSecret, publicKey: flutterConfig.publicKey, privateKey: flutterConfig.privateKey, baseApiUrl: baseApiUrl, publicSigKey: flutterConfig.publicSigKey, privateSigKey: flutterConfig.privateSigKey)
         return config
     }
  }
