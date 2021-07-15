@@ -25,7 +25,7 @@ PODS:
   - Valet (3.2.8)
 
 DEPENDENCIES:
-  - E3db (from `https://github.com/tozny/e3db-swift`)
+  - E3db (from `https://github.com/tozny/e3db-swift`, commit `85b93f74cd4a917f77193005961598de3f5c48ea`)
   - Flutter (from `Flutter`)
   - path_provider (from `.symlinks/plugins/path_provider/ios`)
   - permission_handler (from `.symlinks/plugins/permission_handler/ios`)
@@ -41,6 +41,7 @@ SPEC REPOS:
 
 EXTERNAL SOURCES:
   E3db:
+    :commit: 85b93f74cd4a917f77193005961598de3f5c48ea
     :git: https://github.com/tozny/e3db-swift
   Flutter:
     :path: Flutter
@@ -53,7 +54,7 @@ EXTERNAL SOURCES:
 
 CHECKOUT OPTIONS:
   E3db:
-    :commit: fe2058e5e7058a27cd70e1f5aaed3c0102f83bed
+    :commit: 85b93f74cd4a917f77193005961598de3f5c48ea
     :git: https://github.com/tozny/e3db-swift
 
 SPEC CHECKSUMS:
@@ -68,6 +69,6 @@ SPEC CHECKSUMS:
   ToznySwish: 22cb7f57696adbb98cb9078b278b756215169dc0
   Valet: 16d0537d70db79d9ba953b9060b5da4fb8004e51
 
-PODFILE CHECKSUM: b3944187a873f8c4edb7eb5d6cd341e985de09a3
+PODFILE CHECKSUM: 11069a89762b3cce5394b01ab369f052d9dc9522
 
 COCOAPODS: 1.10.1

@@ -51,23 +51,44 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+
   void onButtonPress() async {
-    String registrationToken = "TOKEN_HERE";
+    var creds = ClientCredentials(apiKey: "", 
+                                  apiSecret: "",
+                                  clientId: "",
+                                  publicKey: "",
+                                  privateKey: "",
+                                  publicSignKey: "",
+                                  privateSigningKey: "",
+                                  host: "https://api.e3db.com",
+                                  email: "",
+                                  clientName: "");
+    var client = PluginTozny(creds);
     try {
-      var client = await register(registrationToken);
-      if (await Permission.storage.request().isGranted) {
-        var resp = writeFile(client);
-      } else {
-        await Permission.storage.request();
-      }
       Record writtenRecord = await writeRecord(client);
-      Record tozstoreRecord =
-          await readRecord(writtenRecord.metaData.recordID, client);
-      developer.log(tozstoreRecord.toJson().toString());
+      developer.log("example flow succeeded");
     } catch (e) {
-      developer.log("example flow failed because $e");
+      developer.log("example flow failed becaused $e");
     }
   }
+
+  // void onButtonPress() async {
+  //   String registrationToken = "TOKEN_HERE";
+  //   try {
+  //     var client = await register(registrationToken);
+  //     if (await Permission.storage.request().isGranted) {
+  //       var resp = writeFile(client);
+  //     } else {
+  //       await Permission.storage.request();
+  //     }
+  //     Record writtenRecord = await writeRecord(client);
+  //     Record tozstoreRecord =
+  //         await readRecord(writtenRecord.metaData.recordID, client);
+  //     developer.log(tozstoreRecord.toJson().toString());
+  //   } catch (e) {
+  //     developer.log("example flow failed because $e");
+  //   }
+  // }
 
   void registerIdentityAndLogin(RealmConfig config, String regToken) async {
     var realmClient = new PluginRealm(config);
