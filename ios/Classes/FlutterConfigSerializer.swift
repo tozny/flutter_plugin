@@ -84,4 +84,11 @@ public struct FlutterConfig: Codable {
         let config: Config = Config(clientName: flutterConfig.clientName, clientId: clientId, apiKeyId: flutterConfig.apiKeyId, apiSecret: flutterConfig.apiSecret, publicKey: flutterConfig.publicKey, privateKey: flutterConfig.privateKey, baseApiUrl: baseApiUrl, publicSigKey: flutterConfig.publicSigKey, privateSigKey: flutterConfig.privateSigKey)
         return config
     }
+    /// A helper function to map an E3db Config to FlutterConfig
+    ///
+    /// - Returns: FlutterConfig
+    public static func decodeToFlutterConfig(e3dbConfig: Config) -> FlutterConfig {
+        let config: FlutterConfig = FlutterConfig(clientName: e3dbConfig.clientName, clientId: e3dbConfig.clientId.uuidString, apiKeyId: e3dbConfig.apiKeyId, apiSecret: e3dbConfig.apiSecret, publicKey: e3dbConfig.publicKey, privateKey: e3dbConfig.privateKey, baseApiUrl: e3dbConfig.baseApiUrl.absoluteString, publicSigKey: e3dbConfig.publicSigKey, privateSigKey: e3dbConfig.privateSigKey)
+        return config
+    }
  }

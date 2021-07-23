@@ -5,21 +5,25 @@ public class E3dbSerializer {
     static func realmFromJson(json: String) -> Application {
         let jsonData = json.data(using: .utf8)!
         let realmConfig: RealmConfigSerializer = try! JSONDecoder().decode(RealmConfigSerializer.self, from: jsonData)
-        return Application(apiUrl: realmConfig.apiURL, appName: realmConfig.appName, realmName: realmConfig.realmName, brokerTargetUrl: realmConfig.brokenTargetURL)
+        return Application(apiUrl: realmConfig.apiURL, appName: realmConfig.appName, realmName: realmConfig.realmName, brokerTargetUrl: realmConfig.brokerTargetURL)
     }
     
     static func idClientToJson(id: Identity) -> String {
         var data: [String: Any] = [:]
-
-        data.updateValue(id.idConfig.storageConfig, forKey: "client_credentials")
+        data.updateValue(E3dbSerializer.configToJson(storageConfig: FlutterConfig.decodeToFlutterConfig(e3dbConfig: id.idConfig.storageConfig)), forKey: "client_credentials")
         data.updateValue(E3dbSerializer.idConfigToJson(idConfig: id.idConfig), forKey: "identity_config")
         data.updateValue(E3dbSerializer.userAgentTokenToJson(tok: id.agentInfo()), forKey: "user_agent_token")
-        
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
         let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString
     }
 
+    static func configToJson(storageConfig: FlutterConfig) -> String {
+            let jsonData = try! JSONEncoder().encode(storageConfig)
+            let jsonString = String(data: jsonData, encoding: .utf8)!
+            return jsonString
+    }
+    
     static func recordMetaToJson(meta: Meta) -> String {
         var data: [String: Any] = [:]
 

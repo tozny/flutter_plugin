@@ -20,11 +20,13 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
             DispatchQueue.main.async {
                 self.writeRecord(call, result: result)
             }
+        case "loginIdentity":
+            self.loginIdentity(call, result: result)
         default:
             result(FlutterMethodNotImplemented)
         }
     }
-    
+
     /// Initializer to create a client from context of `FlutterMethodCall`
     ///
     /// A `FlutterConfig` object is necessary to bridge the Flutter client's `ClientCredentials`
@@ -42,17 +44,17 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
     }
 
     // MARK: WRITE RECORD
-    
+
     /// Writes a record using a `Client` built with values from the `FlutterMethodCall` object that
     /// persisted across `FlutterMethodChannel`.
-    public func writeRecord(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+     public func writeRecord(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let client: Client = self.initClientFromFlutter(call, result: result)!
         let args = call.arguments as! Dictionary<String, Any>
         let fields = args["data"] as! [String: String]
         let plain = args["plain"] as! [String: String]
         let recordType = args["type"] as! String
         let recordData: RecordData = RecordData(cleartext: fields)
-        
+
         /// Dispatching the TozStore API call onto the global system queue to avoid "Unsupported for standard codec" error.
         /// Dispatching this asynchronous network task onto the global queue allows Grand Central Dispatch to manage the asynchronous call.
         /// Blocking the main thread allows for the API call to return to create the record which avoids the serialization error.
@@ -67,6 +69,36 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
                 }
             }
             group.leave()
+        }
+        group.wait()
+    }
+
+    func emptyActionHandler(loginAction: E3db.IdentityLoginAction) -> [String:String] {
+        return [:]
+    }
+
+    /// Get the identity credentials for a user and create a client for them. The username, password and realm details are
+    /// persisted from the `FlutterMethodCall` object
+
+    public func loginIdentity(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let realmConfig = args["realm_config"] as! Dictionary<String,String>
+        let jsonRealm = try! JSONSerialization.data(withJSONObject: realmConfig, options: .prettyPrinted)
+        let stringRealm = String(data: jsonRealm, encoding: .utf8)
+        let realm = E3dbSerializer.realmFromJson(json: stringRealm!)
+        let username = args["username"] as! String
+        let password = args["password"] as! String
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            realm.login(username: username, password: password, actionHandler: self.emptyActionHandler) { (loginResult) in
+                    if let login = loginResult.value {
+                        result(E3dbSerializer.idClientToJson(id: login))
+                    } else {
+                        result(FlutterError(code: "LOGIN", message: "login identity failed", details: nil))
+                    }
+                    group.leave()
+                }
         }
         group.wait()
     }

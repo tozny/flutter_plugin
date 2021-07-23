@@ -10,6 +10,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:plugin_tozny/plugin_realm.dart';
 import 'package:plugin_tozny/plugin_tozny.dart';
 import 'package:plugin_tozny/tozny_model.dart';
+import 'package:plugin_tozny/plugin_identity.dart';
 
 void main() {
   runApp(MyApp());
@@ -22,6 +23,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  String _loggedInIdentity = "None";
+  String _publicSigningKey = "None";
 
   @override
   void initState() {
@@ -51,24 +54,42 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-    void onWriteRecordButtonPress() async {
-      var creds = ClientCredentials(apiKey: "", 
-                                    apiSecret: "",
-                                    clientId: "",
-                                    publicKey: "",
-                                    privateKey: "",
-                                    publicSignKey: "",
-                                    privateSigningKey: "",
-                                    host: "",
-                                    email: "",
-                                    clientName: "");
-      var client = PluginTozny(creds);
-      try {
-        Record writtenRecord = await writeRecord(client);
-        developer.log("example flow succeeded");
-      } catch (e) {
-        developer.log("example flow failed becaused $e");
-      }
+
+  void onWriteRecordButtonPress() async {
+    var creds = ClientCredentials(apiKey: "",
+                                  apiSecret: "",
+                                  clientId: "",
+                                  publicKey: "",
+                                  privateKey: "",
+                                  publicSignKey: "",
+                                  privateSigningKey: "",
+                                  host: "",
+                                  email: "",
+                                  clientName: "");
+    var client = PluginTozny(creds);
+    try {
+      Record writtenRecord = await writeRecord(client);
+      developer.log("example flow succeeded");
+    } catch (e) {
+      developer.log("example flow failed becaused $e");
+    }
+
+  void loginOnButtonPress() async {
+    String apiUrl = "https://api.e3db.com";
+    String appName = "account";
+    String realmName = "example";
+    String brokerTargetUrl = "https://id.tozny.com/example/recover";
+    String username = "user@name.com";
+    String password = "passW0rd!";
+
+    try {
+      var realmCreds = RealmConfig(realmName: realmName, appName: appName, apiURL: apiUrl, brokerTargetURL: brokerTargetUrl);
+      var realm = PluginRealm(realmCreds);
+      PluginIdentity logRes = await loginIdentity(realm, username, password);
+      developer.log("login succeeded for $logRes");
+    } catch (e) {
+      developer.log("example flow failed because $e");
+    }
   }
 
   void onButtonPress() async {
@@ -143,6 +164,19 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  Future<PluginIdentity> loginIdentity(PluginRealm realm, String username, String password) async {
+    try {
+      var loggedInIdentity = await realm.login(username, password);
+      setState(() {
+        _loggedInIdentity = loggedInIdentity.client.credentials.clientName;
+        _publicSigningKey = loggedInIdentity.client.credentials.publicSignKey;
+      });
+      return loggedInIdentity;
+    } catch (e) {
+      developer.log(e.toString());
+    }
+  }
+
   Future<Record> readRecord(String recordID, PluginTozny client) async {
     try {
       var record = await client.readRecord(recordID);
@@ -175,10 +209,15 @@ class _MyAppState extends State<MyApp> {
           Center(
             child: RaisedButton(
               child: Text('Tozny Test'),
-              onPressed: onButtonPress,
+              onPressed: loginOnButtonPress,
             ),
           ),
-          Text('Running on: $_platformVersion\n'),
+          Column(
+            children: [
+            Text('Running on: $_platformVersion'),
+            Text('Logged in identity: $_loggedInIdentity'),
+            Text('public signing key: $_publicSigningKey'),
+          ],),
         ]),
       ),
     );
