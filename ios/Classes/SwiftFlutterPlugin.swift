@@ -15,6 +15,8 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         case "getPlatformVersion":
             result("iOS" + UIDevice.current.systemVersion)
         case "writeRecord":
+            /// Platform-specific channel invocations must adhere to Flutter's main thread requirement:
+            /// https://flutter.dev/docs/development/platform-integration/platform-channels#channels-and-platform-threading
             DispatchQueue.main.async {
                 self.writeRecord(call, result: result)
             }
@@ -43,7 +45,6 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
     
     /// Writes a record using a `Client` built with values from the `FlutterMethodCall` object that
     /// persisted across `FlutterMethodChannel`.
-    ///
     public func writeRecord(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let client: Client = self.initClientFromFlutter(call, result: result)!
         let args = call.arguments as! Dictionary<String, Any>
@@ -51,7 +52,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         let plain = args["plain"] as! [String: String]
         let recordType = args["type"] as! String
         let recordData: RecordData = RecordData(cleartext: fields)
-
+        
+        /// Dispatching the TozStore API call onto the global system queue to avoid "Unsupported for standard codec" error.
+        /// Dispatching this asynchronous network task onto the global queue allows Grand Central Dispatch to manage the asynchronous call.
+        /// Blocking the main thread allows for the API call to return to create the record which avoids the serialization error.
         let group = DispatchGroup()
         group.enter()
         DispatchQueue.global().async {
