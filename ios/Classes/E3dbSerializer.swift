@@ -22,29 +22,30 @@ public class E3dbSerializer {
 
     static func recordMetaToJson(meta: Meta) -> String {
         var data: [String: Any] = [:]
-        
-        // TODO: Accessing meta can fail on optional values? (e.g. 'FileMeta?')
-        // TODO: Check typing on these values, and do the same for the other methods.
-        data.updateValue(meta.recordId, forKey: "record_id")
-        data.updateValue(meta.userId, forKey: "user_id")
-        data.updateValue(meta.writerId, forKey: "writer_id")
-        data.updateValue(meta.created, forKey: "created")
-        data.updateValue(meta.lastModified, forKey: "last_modified")
+
+        data.updateValue(meta.recordId.description, forKey: "record_id")
+        data.updateValue(meta.userId.description, forKey: "user_id")
+        data.updateValue(meta.writerId.description, forKey: "writer_id")
+        data.updateValue(meta.created.description, forKey: "created")
+        data.updateValue(meta.lastModified.description, forKey: "last_modified")
         data.updateValue(meta.version, forKey: "version")
         data.updateValue(meta.type, forKey: "type")
-        
-        // TODO: Implicit coercions of plain and fileMeta to 'Any'
-        data.updateValue(meta.plain, forKey: "plain")
+
+        /// TODO: plain and fileMeta are optional values; provide a default or test that Dart can handle nil values
+        let plainJsonData = try! JSONSerialization.data(withJSONObject: meta.plain!, options: .prettyPrinted)
+        let plainJsonString = String(data: plainJsonData, encoding: .utf8)!
+
+        data.updateValue(plainJsonString, forKey: "plain")
         data.updateValue(meta.fileMeta, forKey: "file_meta")
     
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
         let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString
     }
-
+    
     static func recordToJson(record: Record) -> String {
         var data: [String: Any] = [:]
-        data.updateValue(E3dbSerializer.recordMetaToJson(meta: record.meta), forKey: "meta")
+        data.updateValue(E3dbSerializer.recordMetaToJson(meta: record.meta), forKey: "meta_data")
         data.updateValue(record.data, forKey: "data")
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
         let jsonString = String(data: jsonData, encoding: .utf8)!

@@ -51,6 +51,26 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+    void onWriteRecordButtonPress() async {
+      var creds = ClientCredentials(apiKey: "", 
+                                    apiSecret: "",
+                                    clientId: "",
+                                    publicKey: "",
+                                    privateKey: "",
+                                    publicSignKey: "",
+                                    privateSigningKey: "",
+                                    host: "",
+                                    email: "",
+                                    clientName: "");
+      var client = PluginTozny(creds);
+      try {
+        Record writtenRecord = await writeRecord(client);
+        developer.log("example flow succeeded");
+      } catch (e) {
+        developer.log("example flow failed becaused $e");
+      }
+  }
+
   void onButtonPress() async {
     String registrationToken = "TOKEN_HERE";
     try {
@@ -155,7 +175,7 @@ class _MyAppState extends State<MyApp> {
           Center(
             child: RaisedButton(
               child: Text('Tozny Test'),
-              onPressed: onButtonPress,
+              onPressed: onWriteRecordButtonPress,
             ),
           ),
           Text('Running on: $_platformVersion\n'),
