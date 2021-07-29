@@ -31,12 +31,11 @@ public class E3dbSerializer {
         data.updateValue(meta.version, forKey: "version")
         data.updateValue(meta.type, forKey: "type")
 
-        /// TODO: plain and fileMeta are optional values; provide a default or test that Dart can handle nil values
         let plainJsonData = try! JSONSerialization.data(withJSONObject: meta.plain!, options: .prettyPrinted)
         let plainJsonString = String(data: plainJsonData, encoding: .utf8)!
 
         data.updateValue(plainJsonString, forKey: "plain")
-        data.updateValue(meta.fileMeta, forKey: "file_meta")
+        data.updateValue(fileMetaToJson(meta: meta.fileMeta), forKey: "file_meta")
     
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
         let jsonString = String(data: jsonData, encoding: .utf8)!
@@ -47,6 +46,23 @@ public class E3dbSerializer {
         var data: [String: Any] = [:]
         data.updateValue(E3dbSerializer.recordMetaToJson(meta: record.meta), forKey: "meta_data")
         data.updateValue(record.data, forKey: "data")
+        let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        return jsonString
+    }
+
+    static func fileMetaToJson(meta: FileMeta?) -> String? {
+        if meta == nil {
+            return nil
+        }
+        var data: [String: Any] = [:]
+        
+        /// If meta is not `nil`, then assume we can force unwrap its values
+        data.updateValue(meta!.fileUrl?.description, forKey: "file_url")
+        data.updateValue(meta!.fileName!, forKey: "fileName")
+        data.updateValue(meta!.checksum, forKey: "checksum")
+        data.updateValue(meta!.compression, forKey: "compression")
+        data.updateValue(meta!.size?.description, forKey: "long")
         let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
         let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString

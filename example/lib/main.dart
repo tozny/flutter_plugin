@@ -175,7 +175,7 @@ class _MyAppState extends State<MyApp> {
           Center(
             child: RaisedButton(
               child: Text('Tozny Test'),
-              onPressed: onWriteRecordButtonPress,
+              onPressed: onButtonPress,
             ),
           ),
           Text('Running on: $_platformVersion\n'),
