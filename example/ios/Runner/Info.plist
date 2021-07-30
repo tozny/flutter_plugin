@@ -43,6 +43,7 @@
 	<false/>
 	<key>NSAppTransportSecurity</key>
      <dict>
+     	<!-- This is only needed when developing and running this app against non HTTPS endpoints (i.e. local development versions of Tozny Platform). This is an example project and not a production ready app for publishing to the iOS app store. If you are building a production app, be advised of the need to remove this setting or provide a justification in line with https://developer.apple.com/documentation/bundleresources/information_property_list/nsapptransportsecurity/nsallowsarbitraryloads -->
           <key>NSAllowsArbitraryLoads</key><true/>
      </dict>
 </dict>

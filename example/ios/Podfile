@@ -33,7 +33,7 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   
-  pod "E3db", :git => 'https://github.com/tozny/e3db-swift', :commit => 'c2d09b758b4797be611371bee45064e5d833505b'
+  pod "E3db", :git => 'https://github.com/tozny/e3db-swift', :tag => "4.2.0"
 
 end
 

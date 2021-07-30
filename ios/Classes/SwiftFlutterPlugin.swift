@@ -79,7 +79,6 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
 
     /// Get the identity credentials for a user and create a client for them. The username, password and realm details are
     /// persisted from the `FlutterMethodCall` object
-
     public func loginIdentity(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
         let realmConfig = args["realm_config"] as! Dictionary<String,String>
