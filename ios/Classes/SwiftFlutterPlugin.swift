@@ -26,6 +26,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
             }
         case "loginIdentity":
             self.loginIdentity(call, result: result)
+        case "share":
+            DispatchQueue.main.async {
+                self.share(call, result: result)
+            }
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -94,6 +98,28 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
                     result(E3dbSerializer.recordToJson(record: record))
                 } else {
                     result(FlutterError(code: "READ_RECORD", message: "Read data record failed", details: nil))
+                }
+            }
+        }
+    }
+
+    // MARK: SHARE
+
+    // Shares a record type with another client using its ID 
+    public func share(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let client: Client = self.initClientFromFlutter(call, result: result)!
+        let args = call.arguments as! Dictionary<String, Any>
+        let recordType = args["type"] as! String
+        let readerID = args["reader_id"] as! String
+        
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            client.share(type: recordType, readerId: UUID(uuidString: readerID)!) { (shareResult) in
+                shareResult.analysis(ifSuccess: { voidResultFromShare in
+                    result(nil)
+                }) { error in
+                    result(FlutterError(code: "SHARE_ERROR", message: error.description, details: nil))
                 }
             }
         }

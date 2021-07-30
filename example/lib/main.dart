@@ -54,7 +54,6 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
-
   void onWriteRecordButtonPress() async {
     var creds = ClientCredentials(apiKey: "",
                                   apiSecret: "",
@@ -95,6 +94,29 @@ class _MyAppState extends State<MyApp> {
       developer.log("example flow failed because $e");
     }
   }
+  
+  void onWriteThenShareRecordButtonPress() async {
+    var creds = ClientCredentials(apiKey: "", 
+                                  apiSecret: "",
+                                  clientId: "",
+                                  publicKey: "",
+                                  privateKey: "",
+                                  publicSignKey: "",
+                                  privateSigningKey: "",
+                                  host: "",
+                                  email: "",
+                                  clientName: "");
+    var client = PluginTozny(creds);
+    var recordType = "";
+    var readerID = "";
+    try {
+      Record writtenRecord = await writeRecord(client);
+      await share(client, recordType, readerID);
+      developer.log("write record succeeded");
+    } catch (e) {
+      developer.log("example share flow failed becaused $e");
+    }
+  }
 
   void onButtonPress() async {
     String registrationToken = "TOKEN_HERE";
@@ -129,6 +151,17 @@ class _MyAppState extends State<MyApp> {
       print(record.toJson().toString());
     } catch (e) {
       print("error $e");
+    }
+  }
+
+  Future<void> share(PluginTozny client, String type, String readerID) async {
+    try {
+      await client.share(type, readerID);
+      setState(() {
+        _platformVersion = "shared record: " + type;
+      });
+    } catch (e) {
+      developer.log("Share record failed becaues " + e.toString());
     }
   }
 
