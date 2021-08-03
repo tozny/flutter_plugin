@@ -69,10 +69,14 @@ class _MyAppState extends State<MyApp> {
     var client = PluginTozny(creds);
     try {
       Record writtenRecord = await writeRecord(client);
+      Record tozstoreRecord =
+          await readRecord(writtenRecord.metaData.recordID, client);
+      developer.log(tozstoreRecord.toJson().toString());
       developer.log("example flow succeeded");
     } catch (e) {
       developer.log("example flow failed becaused $e");
     }
+  }
 
   void loginOnButtonPress() async {
     String apiUrl = "https://api.e3db.com";

@@ -20,6 +20,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
             DispatchQueue.main.async {
                 self.writeRecord(call, result: result)
             }
+        case "readRecord":
+            DispatchQueue.main.async {
+                self.readRecord(call, result: result)
+            }
         case "loginIdentity":
             self.loginIdentity(call, result: result)
         default:
@@ -72,11 +76,35 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         }
         group.wait()
     }
+    
+    // MARK: READ RECORD
+    
+    /// Reads a record using `Client` constructed from values sent over `FlutterMethodChannel`
+    public func readRecord(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let client: Client = self.initClientFromFlutter(call, result: result)!
+        let args = call.arguments as! Dictionary<String, Any>
+        let recordID = args["record_id"] as! String
+        
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            /// Does not sanity check `uuidString`, so forced unwrap may fail
+            client.read(recordId: UUID(uuidString: recordID)!) { (readResult) in
+                if let record = readResult.value {
+                    result(E3dbSerializer.recordToJson(record: record))
+                } else {
+                    result(FlutterError(code: "READ_RECORD", message: "Read data record failed", details: nil))
+                }
+            }
+        }
+    }
 
     func emptyActionHandler(loginAction: E3db.IdentityLoginAction) -> [String:String] {
         return [:]
     }
 
+    // MARK: LOGIN IDENTITY
+    
     /// Get the identity credentials for a user and create a client for them. The username, password and realm details are
     /// persisted from the `FlutterMethodCall` object
     public func loginIdentity(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
