@@ -302,7 +302,7 @@ class _MyAppState extends State<MyApp> {
           Center(
             child: RaisedButton(
               child: Text('Tozny Test'),
-              onPressed: loginOnButtonPress,
+              onPressed: onButtonPress,
             ),
           ),
           Column(

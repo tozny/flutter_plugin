@@ -24,6 +24,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
             DispatchQueue.main.async {
                 self.readRecord(call, result: result)
             }
+        case "register":
+            DispatchQueue.main.async {
+                self.register(call, result: result)
+            }
         case "loginIdentity":
             self.loginIdentity(call, result: result)
         case "registerIdentity":
@@ -185,6 +189,29 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
                     result(E3dbSerializer.recordMetaToJson(meta: writtenFile))
                 } else {
                     result(FlutterError(code: "WRITE FILE", message: "write file failed", details: nil))
+                }
+            }
+            group.leave()
+        }
+        group.wait()
+    }
+    
+    // MARK: REGISTER CLIENT
+
+    public func register(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let registrationToken = args["registration_token"] as! String
+        let clientName = args["client_name"] as! String
+        let host = args["host"] as! String
+        
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            E3db.Client.register(token: registrationToken, clientName: clientName, urlSession: .shared, apiUrl: host) { (registerResult) in
+                if let config = registerResult.value {
+                    result(E3dbSerializer.configToJson(storageConfig: FlutterConfig.decodeToFlutterConfig(e3dbConfig: config)))
+                } else {
+                    result(FlutterError(code: "REGISTER", message: "Failed to register client", details: nil))
                 }
             }
             group.leave()
