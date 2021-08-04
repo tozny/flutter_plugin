@@ -100,7 +100,9 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
                     result(FlutterError(code: "READ_RECORD", message: "Read data record failed", details: nil))
                 }
             }
+            group.leave()
         }
+        group.wait()
     }
 
     // MARK: SHARE
@@ -116,13 +118,15 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         group.enter()
         DispatchQueue.global().async {
             client.share(type: recordType, readerId: UUID(uuidString: readerID)!) { (shareResult) in
-                shareResult.analysis(ifSuccess: { voidResultFromShare in
+                shareResult.analysis(ifSuccess: { (voidResultFromShare) in
                     result(nil)
                 }) { error in
                     result(FlutterError(code: "SHARE_ERROR", message: error.description, details: nil))
                 }
             }
+            group.leave()
         }
+        group.wait()
     }
 
     func emptyActionHandler(loginAction: E3db.IdentityLoginAction) -> [String:String] {
