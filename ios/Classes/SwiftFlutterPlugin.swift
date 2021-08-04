@@ -223,7 +223,7 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         group.wait()
     }
     
-    // MARK: REGISTER
+    // MARK: REGISTER IDENTITY
     
     public func registerIdentity(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let args = call.arguments as! Dictionary<String, Any>
@@ -233,7 +233,7 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         let email = args["email"] as! String
         let firstName = args["first_name"] as! String
         let lastName = args["last_name"] as! String
-        let emailEACPExpiry: Int! = Int(args["email_eacp_expiry"] as! String) /// e3db-swift expects a `Int` for `realm.register` method
+        let emailEACPExpiry = Int(args["email_eacp_expiry"] as! String)! /// e3db-swift expects an `Int` for `realm.register` method
         
         let realmConfig = args["realm_config"] as! Dictionary<String,String>
         let jsonRealm = try! JSONSerialization.data(withJSONObject: realmConfig, options: .prettyPrinted)
@@ -250,7 +250,9 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
                     result(FlutterError(code: "REGISTER_IDENTITY", message: "register identity failed", details: nil))
                 }
             }
+            group.leave()
         }
+        group.wait()
     }
 
 }

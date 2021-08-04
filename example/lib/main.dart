@@ -159,6 +159,24 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  void registerIdentityOnButtonPress() async {
+    String apiUrl = "";
+    String appName = "account";
+    String realmName = "";
+    String brokerTargetUrl = "https://id.tozny.com/example/recover";
+    String username = "";
+    String password = "";
+
+    try {
+      var realmCreds = RealmConfig(realmName: realmName, appName: appName, apiURL: apiUrl, brokerTargetURL: brokerTargetUrl);
+      var token = "";
+      await registerIdentityAndLogin(realmCreds, token);
+    } catch (e) {
+      developer.log("Example flow failed because $e");
+    }
+
+  }
+
   void registerIdentityAndLogin(RealmConfig config, String regToken) async {
     var realmClient = new PluginRealm(config);
     Random random = new Random();
@@ -172,6 +190,10 @@ class _MyAppState extends State<MyApp> {
       print("writing record with identity");
       var record = await writeRecord(loggedInIdentity.client);
       print(record.toJson().toString());
+      setState(() {
+        _platformVersion = "Registered identity, logged in, and wrote a record";
+      });
+
     } catch (e) {
       print("error $e");
     }

@@ -37,6 +37,9 @@ public struct FlutterConfig: Codable {
 
     /// The client's secret signing key
     public let privateSigKey: String
+    
+    /// The client's email
+    public let email: String?
 
     public init(
         clientName: String,
@@ -47,7 +50,8 @@ public struct FlutterConfig: Codable {
         privateKey: String,
         baseApiUrl: String,
         publicSigKey: String,
-        privateSigKey: String
+        privateSigKey: String,
+        email: String?
     ) {
         self.clientName = clientName
         self.clientId = clientId
@@ -58,6 +62,10 @@ public struct FlutterConfig: Codable {
         self.baseApiUrl = baseApiUrl
         self.publicSigKey = publicSigKey
         self.privateSigKey = privateSigKey
+        
+        /// Config object in e3db-swift does not use an email, but it is expected by Flutter frontend
+        /// Defaults to an empty string if `nil` to resolve error caused by force unwrapping `nil` values
+        self.email = email ?? ""
     }
 
     /// Values for keys that map to what is expected from Flutter Dart client
@@ -71,6 +79,7 @@ public struct FlutterConfig: Codable {
         case baseApiUrl    = "api_url"
         case publicSigKey  = "public_signing_key"
         case privateSigKey = "private_signing_key"
+        case email         = "client_email"
     }
 }
 
@@ -88,7 +97,8 @@ public struct FlutterConfig: Codable {
     ///
     /// - Returns: FlutterConfig
     public static func decodeToFlutterConfig(e3dbConfig: Config) -> FlutterConfig {
-        let config: FlutterConfig = FlutterConfig(clientName: e3dbConfig.clientName, clientId: e3dbConfig.clientId.uuidString, apiKeyId: e3dbConfig.apiKeyId, apiSecret: e3dbConfig.apiSecret, publicKey: e3dbConfig.publicKey, privateKey: e3dbConfig.privateKey, baseApiUrl: e3dbConfig.baseApiUrl.absoluteString, publicSigKey: e3dbConfig.publicSigKey, privateSigKey: e3dbConfig.privateSigKey)
+        /// `email` in `FlutterConfig` constructor set to empty string when decoding Config object because Config does not have an `email` field
+        let config: FlutterConfig = FlutterConfig(clientName: e3dbConfig.clientName, clientId: e3dbConfig.clientId.uuidString, apiKeyId: e3dbConfig.apiKeyId, apiSecret: e3dbConfig.apiSecret, publicKey: e3dbConfig.publicKey, privateKey: e3dbConfig.privateKey, baseApiUrl: e3dbConfig.baseApiUrl.absoluteString, publicSigKey: e3dbConfig.publicSigKey, privateSigKey: e3dbConfig.privateSigKey, email: "")
         return config
     }
  }
