@@ -26,6 +26,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
             }
         case "loginIdentity":
             self.loginIdentity(call, result: result)
+        case "registerIdentity":
+            DispatchQueue.main.async {
+                self.registerIdentity(call, result: result)
+            }
         case "share":
             DispatchQueue.main.async {
                 self.share(call, result: result)
@@ -137,6 +141,9 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         group.wait()
     }
 
+    // MARK: REVOKE
+    
+    // Revokes a record type from a client using its ID
     public func revoke(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let client: Client = self.initClientFromFlutter(call, result: result)!
         let args = call.arguments as! Dictionary<String, Any>
@@ -215,4 +222,35 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         }
         group.wait()
     }
+    
+    // MARK: REGISTER
+    
+    public func registerIdentity(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let args = call.arguments as! Dictionary<String, Any>
+        let username = args["username"] as! String
+        let password = args["password"] as! String
+        let token = args["token"] as! String
+        let email = args["email"] as! String
+        let firstName = args["first_name"] as! String
+        let lastName = args["last_name"] as! String
+        let emailEACPExpiry: Int! = Int(args["email_eacp_expiry"] as! String) /// e3db-swift expects a `Int` for `realm.register` method
+        
+        let realmConfig = args["realm_config"] as! Dictionary<String,String>
+        let jsonRealm = try! JSONSerialization.data(withJSONObject: realmConfig, options: .prettyPrinted)
+        let stringRealm = String(data: jsonRealm, encoding: .utf8)
+        let realm = E3dbSerializer.realmFromJson(json: stringRealm!)
+        
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            realm.register(username: username, password: password, email: email, token: token, firstName: firstName, lastName: lastName, emailEacpExpiryMinutes: emailEACPExpiry) { (registerIdentityResult) in
+                if let partialId = registerIdentityResult.value {
+                    result(E3dbSerializer.partialIdClientToJson(id: partialId))
+                } else {
+                    result(FlutterError(code: "REGISTER_IDENTITY", message: "register identity failed", details: nil))
+                }
+            }
+        }
+    }
+
 }

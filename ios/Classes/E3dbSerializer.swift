@@ -17,6 +17,15 @@ public class E3dbSerializer {
         let jsonString = String(data: jsonData, encoding: .utf8)!
         return jsonString
     }
+    
+    static func partialIdClientToJson(id: PartialIdentity) -> String {
+        var data: [String: Any] = [:]
+        data.updateValue(E3dbSerializer.configToJson(storageConfig: FlutterConfig.decodeToFlutterConfig(e3dbConfig: id.idConfig.storageConfig)), forKey: "client_credentials")
+        data.updateValue(E3dbSerializer.idConfigToJson(idConfig: id.idConfig), forKey: "identity_config")
+        let jsonData = try! JSONSerialization.data(withJSONObject: data, options: .prettyPrinted)
+        let jsonString = String(data: jsonData, encoding: .utf8)!
+        return jsonString
+    }
 
     static func configToJson(storageConfig: FlutterConfig) -> String {
             let jsonData = try! JSONEncoder().encode(storageConfig)
