@@ -34,6 +34,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
             DispatchQueue.main.async {
                 self.revoke(call, result: result)
             }
+        case "writeFile":
+            DispatchQueue.main.async {
+                self.writeFile(call, result: result)
+            }
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -132,13 +136,13 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         }
         group.wait()
     }
-    
+
     public func revoke(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         let client: Client = self.initClientFromFlutter(call, result: result)!
         let args = call.arguments as! Dictionary<String, Any>
         let recordType = args["type"] as! String
         let readerID = args["reader_id"] as! String
-        
+
         let group = DispatchGroup()
         group.enter()
         DispatchQueue.global().async {
@@ -154,7 +158,32 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         group.wait()
 
     }
-
+    
+    // MARK: WRITE FILE
+    
+    /// Write a new file record in Tozny storage
+    public func writeFile(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let client: Client = self.initClientFromFlutter(call, result: result)!
+        let args = call.arguments as! Dictionary<String,Any>
+        let recordType = args["type"] as! String
+        let filePath = args["file_path"] as! String
+        let fileURL = URL(fileURLWithPath: filePath)
+        let plain = args["plain"] as! Dictionary<String,String>
+        
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            client.writeFile(type: recordType, fileUrl: fileURL, plain: plain) { (writeFileResult) in
+                if let writtenFile = writeFileResult.value {
+                    result(E3dbSerializer.recordMetaToJson(meta: writtenFile))
+                } else {
+                    result(FlutterError(code: "WRITE FILE", message: "write file failed", details: nil))
+                }
+            }
+            group.leave()
+        }
+        group.wait()
+    }
 
     func emptyActionHandler(loginAction: E3db.IdentityLoginAction) -> [String:String] {
         return [:]
@@ -181,8 +210,8 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
                     } else {
                         result(FlutterError(code: "LOGIN", message: "login identity failed", details: nil))
                     }
-                    group.leave()
                 }
+            group.leave()
         }
         group.wait()
     }
