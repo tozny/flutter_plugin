@@ -95,6 +95,28 @@ class _MyAppState extends State<MyApp> {
     }
   }
   
+  void writeFileOnButtonPress() async {
+    var creds = ClientCredentials(apiKey: "", 
+                                  apiSecret: "",
+                                  clientId: "",
+                                  publicKey: "",
+                                  privateKey: "",
+                                  publicSignKey: "",
+                                  privateSigningKey: "",
+                                  host: "",
+                                  email: "",
+                                  clientName: "");
+    var client = PluginTozny(creds);
+    try {
+      RecordMeta writtenFileMeta = await writeFile(client);
+      // verify the record was created & can be read
+      Record fileRecord = await readRecord(writtenFileMeta.recordID, client);
+      developer.log("write file succeeded: $writtenFileMeta");
+    } catch(e) {
+      developer.log("example write file flow failed because $e");
+    }
+  }
+
   void onWriteThenShareRecordButtonPress() async {
     var creds = ClientCredentials(apiKey: "", 
                                   apiSecret: "",
