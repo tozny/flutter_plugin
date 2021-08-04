@@ -107,12 +107,13 @@ class _MyAppState extends State<MyApp> {
                                   email: "",
                                   clientName: "");
     var client = PluginTozny(creds);
-    var recordType = "";
+    var recordType = "testType1";
     var readerID = "";
     try {
       Record writtenRecord = await writeRecord(client);
       await share(client, recordType, readerID);
-      developer.log("write record succeeded");
+      await revoke(client, recordType, readerID);
+      developer.log("write, share, then revoke record flow succeeded");
     } catch (e) {
       developer.log("example share flow failed becaused $e");
     }
@@ -161,7 +162,18 @@ class _MyAppState extends State<MyApp> {
         _platformVersion = "shared record: " + type;
       });
     } catch (e) {
-      developer.log("Share record failed becaues " + e.toString());
+      developer.log("Share record failed because " + e.toString());
+    }
+  }
+
+  Future<void> revoke(PluginTozny client, String type, String readerID) async {
+    try {
+      await client.revoke(type, readerID);
+      setState(() {
+        _platformVersion = "revoked record: " + type;
+      });
+    } catch (e) {
+      developer.log("Revoking record failed because " + e.toString());
     }
   }
 

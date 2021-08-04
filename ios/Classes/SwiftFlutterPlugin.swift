@@ -30,6 +30,10 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
             DispatchQueue.main.async {
                 self.share(call, result: result)
             }
+        case "revoke":
+            DispatchQueue.main.async {
+                self.revoke(call, result: result)
+            }
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -128,6 +132,29 @@ public class SwiftFlutterPlugin: NSObject, Flutter.FlutterPlugin {
         }
         group.wait()
     }
+    
+    public func revoke(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        let client: Client = self.initClientFromFlutter(call, result: result)!
+        let args = call.arguments as! Dictionary<String, Any>
+        let recordType = args["type"] as! String
+        let readerID = args["reader_id"] as! String
+        
+        let group = DispatchGroup()
+        group.enter()
+        DispatchQueue.global().async {
+            client.revoke(type: recordType, readerId: UUID(uuidString: readerID)!) { (revokeResult) in
+                revokeResult.analysis(ifSuccess: { (voidResultFromRevoke) in
+                    result(nil)
+                }) { error in
+                    result(FlutterError(code: "REVOKE_ERROR", message: error.description, details: nil))
+                }
+            }
+            group.leave()
+        }
+        group.wait()
+
+    }
+
 
     func emptyActionHandler(loginAction: E3db.IdentityLoginAction) -> [String:String] {
         return [:]
