@@ -12,7 +12,7 @@ import E3db
 public struct FlutterConfig: Codable {
 
     /// The name for this client
-    public let clientName: String
+    public let clientName: String?
 
     /// The client identifier
     public let clientId: String
@@ -42,7 +42,7 @@ public struct FlutterConfig: Codable {
     public let email: String?
 
     public init(
-        clientName: String,
+        clientName: String?,
         clientId: String,
         apiKeyId: String,
         apiSecret: String,
@@ -53,7 +53,7 @@ public struct FlutterConfig: Codable {
         privateSigKey: String,
         email: String?
     ) {
-        self.clientName = clientName
+        self.clientName = clientName ?? ""
         self.clientId = clientId
         self.apiKeyId = apiKeyId
         self.apiSecret = apiSecret
