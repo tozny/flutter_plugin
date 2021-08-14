@@ -88,8 +88,23 @@ public class E3dbSerializer {
     }
     
     static func userAgentTokenToJson(tok: AgentToken) -> String {
-            let jsonData = try! JSONEncoder().encode(tok)
-            let jsonString = String(data: jsonData, encoding: .utf8)!
-            return jsonString
+        let jsonData = try! JSONEncoder().encode(tok)
+        var intermediateFlutterAgentToken = try! JSONDecoder().decode(IntermediateFlutterAgentToken.self, from: jsonData)
+        
+        /// Convert Swift `timeIntervalSinceReferenceDate` to `timeIntervalSince1970` in milliseconds
+        /// Apple considers its 0 time as 1 January 2001 instead of 1 January 1971, this performs the conversion from the
+        /// former to the latter.
+        intermediateFlutterAgentToken.expiryAsUnixEpoch = Int(intermediateFlutterAgentToken.expiry.timeIntervalSince1970*1000)
+        let flutterAgentTokenMap = IntermediateFlutterAgentToken.encodeWithoutDateType(flutterAgentToken: intermediateFlutterAgentToken)
+        
+        /// Need to respect Swift's Codable protocol and parity between Android and iOS plugins, so another level of indirection
+        /// is performed in order to remove the `FlutterAgentToken.expiryAsUnixEpoch` field and make the `expiry` field
+        /// `Int` instead of a `String`
+        let flutterAgentToken = FlutterAgentToken(accessToken: flutterAgentTokenMap["access_token"]!, tokenType: flutterAgentTokenMap["token_type"]!, expiry: Int(flutterAgentTokenMap["expiry"]!)!)
+                
+        let flutterAgentTokenData = try! JSONEncoder().encode(flutterAgentToken)
+
+        let jsonString = String(data: flutterAgentTokenData, encoding: .utf8)!
+        return jsonString
     }
 }

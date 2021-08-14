@@ -11,7 +11,7 @@ Use in your Dart or Flutter project by adding `plugin_tozny` as a dependency in 
  plugin_tozny:
    git:
      url: git://github.com/tozny/flutter-plugin
-     ref: 0.0.4
+     ref: 0.0.5
 ```
 
 ### End-to-end TozId Identity Registration, Login, & TozStore encrypted filed storage example

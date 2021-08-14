@@ -219,7 +219,7 @@ class AgentToken {
   @JsonKey(name: "token_type")
   String tokenType;
   @JsonKey(name: "expiry")
-  double expiry;
+  int expiry;
 
   AgentToken(
     this.accessToken,

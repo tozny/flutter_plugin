@@ -15,3 +15,8 @@ Upgrade json_serializable to core dependency
 * Add documentation and complete example for use case of creating a TozId Identity for writing file data to TozStore
 * Remove logging of sensitive credentials 
 * Add documentation for how to publish new versions
+
+## 0.0.5
+
+* Add iOS plugin with feature parity with Android plugin
+* Add documentation for how to build and run the iOS plugin and example application

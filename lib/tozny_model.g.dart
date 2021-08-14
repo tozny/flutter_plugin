@@ -198,7 +198,7 @@ AgentToken _$AgentTokenFromJson(Map<String, dynamic> json) {
     final val = AgentToken(
       $checkedConvert(json, 'access_token', (v) => v as String),
       $checkedConvert(json, 'token_type', (v) => v as String),
-      $checkedConvert(json, 'expiry', (v) => v as double),
+      $checkedConvert(json, 'expiry', (v) => v as int),
     );
     return val;
   }, fieldKeyMap: const {
