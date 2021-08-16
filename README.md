@@ -101,7 +101,4 @@ I/flutter ( 6719): Wrote file Record {record_id: 0901582a-1ae2-4e42-8435-f74212e
 
 ## Current Limitations
 
-* Plugin only works for Flutter apps running on Android.
-* Plugin implements a partial set of all the methods and classes provided by the native SDK ([e3db-java](https://github.com/tozny/e3db-java)).
-* Plugin only works with TozId Realms where the realm name is all lowercase.
-* Plugin only works with TozId Identities creating using this plugin / is incompatible with those created via the TozId UI.
+* Plugin implements a partial set of all the methods and classes provided by the native SDK ([e3db-java](https://github.com/tozny/e3db-java)/[e3db-swift](https://github.com/tozny/e3db-swift)).
